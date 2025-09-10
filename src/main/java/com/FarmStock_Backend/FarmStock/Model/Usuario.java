@@ -2,15 +2,8 @@ package com.FarmStock_Backend.FarmStock.Model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name="usuario")
@@ -38,15 +31,15 @@ public class Usuario {
 
     @NotBlank(message = "El nombre de formación no puede estar vacío")
     @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre de formación solo puede contener letras")
-    private String nombre_formacion;
+    private String nombreFormacion;   // <-- corregido a camelCase
 
     @NotBlank(message = "El número de ficha no puede estar vacío")
     @Pattern(regexp = "^[0-9]+$", message = "El número de ficha debe contener solo dígitos")
-    private String numero_ficha;
+    private String numeroFicha;       // <-- corregido
 
     @NotBlank(message = "El número de documento no puede estar vacío")
     @Pattern(regexp = "^[0-9]+$", message = "El número de documento debe contener solo dígitos")
-    private String numero_documento;
+    private String numeroDocumento;   // <-- corregido
 
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Pattern(
@@ -73,9 +66,9 @@ public class Usuario {
         String apellidos,
         String correo,
         String telefono,
-        String nombre_formacion,
-        String numero_ficha,
-        String numero_documento,
+        String nombreFormacion,
+        String numeroFicha,
+        String numeroDocumento,
         String cargo,
         String tipoDocumento,
         String contrasena) {
@@ -83,100 +76,47 @@ public class Usuario {
         this.apellidos = apellidos;
         this.correo = correo;
         this.telefono = telefono;
-        this.nombre_formacion = nombre_formacion;
-        this.numero_ficha = numero_ficha;
-        this.numero_documento = numero_documento;
+        this.nombreFormacion = nombreFormacion;
+        this.numeroFicha = numeroFicha;
+        this.numeroDocumento = numeroDocumento;
         this.cargo = cargo;
         this.tipoDocumento = tipoDocumento;
         this.contrasena = contrasena;
     }
 
-    // Getters y setters (puedes generarlos con Lombok si quieres simplificar)
-    public int getId() {
-        return idUsuario;
-    }
+    // Getters y setters (ahora en camelCase)
+    public int getIdUsuario() { return idUsuario; }
+    public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
 
-    public String getNombres() {
-        return nombres;
-    }
+    public String getNombres() { return nombres; }
+    public void setNombres(String nombres) { this.nombres = nombres.toLowerCase().trim(); }
 
-    public void setNombres(String nombres) {
-        this.nombres = nombres.toLowerCase().trim();
-    }
+    public String getApellidos() { return apellidos; }
+    public void setApellidos(String apellidos) { this.apellidos = apellidos.toLowerCase().trim(); }
 
-    public String getApellidos() {
-        return apellidos;
-    }
+    public String getCorreo() { return correo; }
+    public void setCorreo(String correo) { this.correo = correo.toLowerCase().trim(); }
 
-    public void setApellidos(String apellidos) {
-        this.apellidos = apellidos.toLowerCase().trim();
-    }
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
-    public String getCorreo() {
-        return correo;
-    }
+    public String getNombreFormacion() { return nombreFormacion; }
+    public void setNombreFormacion(String nombreFormacion) { this.nombreFormacion = nombreFormacion.toLowerCase().trim(); }
 
-    public void setCorreo(String correo) {
-        this.correo = correo.toLowerCase().trim();
-    }
+    public String getNumeroFicha() { return numeroFicha; }
+    public void setNumeroFicha(String numeroFicha) { this.numeroFicha = numeroFicha; }
 
-    public String getTelefono() {
-        return telefono;
-    }
+    public String getNumeroDocumento() { return numeroDocumento; }
+    public void setNumeroDocumento(String numeroDocumento) { this.numeroDocumento = numeroDocumento; }
 
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+    public String getContrasena() { return contrasena; }
+    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
 
-    public String getNombre_formacion() {
-        return nombre_formacion;
-    }
+    public String getCargo() { return cargo; }
+    public void setCargo(String cargo) { this.cargo = cargo.toLowerCase().trim(); }
 
-    public void setNombre_formacion(String nombre_formacion) {
-        this.nombre_formacion = nombre_formacion.toLowerCase().trim();
-    }
+    public String getTipoDocumento() { return tipoDocumento; }
+    public void setTipoDocumento(String tipoDocumento) { this.tipoDocumento = tipoDocumento; }
 
-    public String getNumero_ficha() {
-        return numero_ficha;
-    }
-
-    public void setNumero_ficha(String numero_ficha) {
-        this.numero_ficha = numero_ficha;
-    }
-
-    public String getNumero_documento() {
-        return numero_documento;
-    }
-
-    public void setNumero_documento(String numero_documento) {
-        this.numero_documento = numero_documento;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
-    }
-
-    public String getCargo() {
-        return cargo;
-    }
-
-    public void setCargo(String cargo) {
-        this.cargo = cargo.toLowerCase().trim();
-    }
-
-    public String getTipoDocumento() {
-        return tipoDocumento;
-    }
-
-    public void setTipoDocumento(String tipoDocumento) {
-        this.tipoDocumento = tipoDocumento;
-    }
-
-    public LocalDateTime getFechaRegistro() {
-        return fechaRegistro;
-    }
+    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
 }
