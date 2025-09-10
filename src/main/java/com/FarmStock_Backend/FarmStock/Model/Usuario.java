@@ -1,15 +1,24 @@
 package com.FarmStock_Backend.FarmStock.Model;
 
 import java.time.LocalDateTime;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name="usuario")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    @Column(name = "id_usuario") 
+    private Integer idUsuario;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre solo puede contener letras")
@@ -47,7 +56,7 @@ public class Usuario {
     private String contrasena;
 
     @NotBlank(message = "El cargo no puede estar vacío")
-    @Pattern(regexp = "^(Instructor|Aprendiz|Administrador)$", message = "Cargo no válido. Opciones: Instructor, Aprendiz, Administrador")
+    @Pattern(regexp = "^(instructor|aprendiz|administrador)$", message = "Cargo no válido. Opciones: Instructor, Aprendiz, Administrador")
     private String cargo;
 
     @NotBlank(message = "El tipo de documento no puede estar vacío")
@@ -84,7 +93,7 @@ public class Usuario {
 
     // Getters y setters (puedes generarlos con Lombok si quieres simplificar)
     public int getId() {
-        return id;
+        return idUsuario;
     }
 
     public String getNombres() {
@@ -92,7 +101,7 @@ public class Usuario {
     }
 
     public void setNombres(String nombres) {
-        this.nombres = nombres;
+        this.nombres = nombres.toLowerCase().trim();
     }
 
     public String getApellidos() {
@@ -100,7 +109,7 @@ public class Usuario {
     }
 
     public void setApellidos(String apellidos) {
-        this.apellidos = apellidos;
+        this.apellidos = apellidos.toLowerCase().trim();
     }
 
     public String getCorreo() {
@@ -108,7 +117,7 @@ public class Usuario {
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
+        this.correo = correo.toLowerCase().trim();
     }
 
     public String getTelefono() {
@@ -124,7 +133,7 @@ public class Usuario {
     }
 
     public void setNombre_formacion(String nombre_formacion) {
-        this.nombre_formacion = nombre_formacion;
+        this.nombre_formacion = nombre_formacion.toLowerCase().trim();
     }
 
     public String getNumero_ficha() {
@@ -156,7 +165,7 @@ public class Usuario {
     }
 
     public void setCargo(String cargo) {
-        this.cargo = cargo;
+        this.cargo = cargo.toLowerCase().trim();
     }
 
     public String getTipoDocumento() {
