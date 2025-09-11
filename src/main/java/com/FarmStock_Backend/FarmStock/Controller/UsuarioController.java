@@ -76,4 +76,23 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Usuario datosLogin) {
+        try {
+            String mensaje = service.login(
+                    datosLogin.getNumeroDocumento(),
+                    datosLogin.getContrasena()
+            );
+            return ResponseEntity.ok(mensaje);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+
+
+
 }

@@ -2,12 +2,20 @@ package com.FarmStock_Backend.FarmStock.Model;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 
 @Entity
 @Table(name="usuario")
 public class Usuario {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_usuario") 
@@ -31,29 +39,32 @@ public class Usuario {
 
     @NotBlank(message = "El nombre de formación no puede estar vacío")
     @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre de formación solo puede contener letras")
-    private String nombreFormacion;   // <-- corregido a camelCase
+    @Column(name = "nombre_formacion")
+    private String nombreFormacion;
 
     @NotBlank(message = "El número de ficha no puede estar vacío")
     @Pattern(regexp = "^[0-9]+$", message = "El número de ficha debe contener solo dígitos")
-    private String numeroFicha;       // <-- corregido
+    @Column(name = "numero_ficha")
+    private String numeroFicha;
 
     @NotBlank(message = "El número de documento no puede estar vacío")
     @Pattern(regexp = "^[0-9]+$", message = "El número de documento debe contener solo dígitos")
-    private String numeroDocumento;   // <-- corregido
+    @Column(name = "numero_documento")
+    private String numeroDocumento;
 
-    @NotBlank(message = "La contraseña no puede estar vacía")
     @Pattern(
-        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!¿?*.,:;_-]).{8,}$",
-        message = "La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial"
+    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!¿?*.,:;_-]).{8,}$",
+    message = "La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial"
     )
     private String contrasena;
 
     @NotBlank(message = "El cargo no puede estar vacío")
-    @Pattern(regexp = "^(instructor|aprendiz|administrador)$", message = "Cargo no válido. Opciones: Instructor, Aprendiz, Administrador")
+    @Pattern(regexp = "^(instructor|aprendiz|administrador)$", message = "Cargo no válido. Opciones: instructor, aprendiz, administrador")
     private String cargo;
 
     @NotBlank(message = "El tipo de documento no puede estar vacío")
-    @Pattern(regexp = "^(CC|TI|CE|Pasaporte)$", message = "Tipo de documento no válido. Opciones: CC, TI, CE, Pasaporte")
+    @Pattern(regexp = "^(CC|TI|PPT)$", message = "Tipo de documento no válido. Opciones: CC, TI, PPT")
+    @Column(name = "tipo_documento")
     private String tipoDocumento;
 
     @Column(name = "fecha_registro", insertable = false, updatable = false)
@@ -61,17 +72,9 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(
-        String nombres,
-        String apellidos,
-        String correo,
-        String telefono,
-        String nombreFormacion,
-        String numeroFicha,
-        String numeroDocumento,
-        String cargo,
-        String tipoDocumento,
-        String contrasena) {
+    public Usuario(String nombres, String apellidos, String correo, String telefono,
+                   String nombreFormacion, String numeroFicha, String numeroDocumento,
+                   String cargo, String tipoDocumento, String contrasena) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.correo = correo;
@@ -84,39 +87,82 @@ public class Usuario {
         this.contrasena = contrasena;
     }
 
-    // Getters y setters (ahora en camelCase)
-    public int getIdUsuario() { return idUsuario; }
-    public void setIdUsuario(Integer idUsuario) { this.idUsuario = idUsuario; }
+    // Getters y setters
+    public Integer getId() {
+        return idUsuario;
+    }
 
-    public String getNombres() { return nombres; }
-    public void setNombres(String nombres) { this.nombres = nombres.toLowerCase().trim(); }
+    public String getNombres() {
+        return nombres;
+    }
+    public void setNombres(String nombres) {
+        this.nombres = nombres.trim();
+    }
 
-    public String getApellidos() { return apellidos; }
-    public void setApellidos(String apellidos) { this.apellidos = apellidos.toLowerCase().trim(); }
+    public String getApellidos() {
+        return apellidos;
+    }
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos.trim();
+    }
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo.toLowerCase().trim(); }
+    public String getCorreo() {
+        return correo;
+    }
+    public void setCorreo(String correo) {
+        this.correo = correo.toLowerCase().trim();
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public String getTelefono() {
+        return telefono;
+    }
+    public void setTelefono(String telefono) {
+        this.telefono = telefono.trim();
+    }
 
-    public String getNombreFormacion() { return nombreFormacion; }
-    public void setNombreFormacion(String nombreFormacion) { this.nombreFormacion = nombreFormacion.toLowerCase().trim(); }
+    public String getNombreFormacion() {
+        return nombreFormacion;
+    }
+    public void setNombreFormacion(String nombreFormacion) {
+        this.nombreFormacion = nombreFormacion.trim();
+    }
 
-    public String getNumeroFicha() { return numeroFicha; }
-    public void setNumeroFicha(String numeroFicha) { this.numeroFicha = numeroFicha; }
+    public String getNumeroFicha() {
+        return numeroFicha;
+    }
+    public void setNumeroFicha(String numeroFicha) {
+        this.numeroFicha = numeroFicha;
+    }
 
-    public String getNumeroDocumento() { return numeroDocumento; }
-    public void setNumeroDocumento(String numeroDocumento) { this.numeroDocumento = numeroDocumento; }
+    public String getNumeroDocumento() {
+        return numeroDocumento;
+    }
+    public void setNumeroDocumento(String numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
 
-    public String getContrasena() { return contrasena; }
-    public void setContrasena(String contrasena) { this.contrasena = contrasena; }
+    public String getContrasena() {
+        return contrasena;
+    }
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena.trim();
+    }
 
-    public String getCargo() { return cargo; }
-    public void setCargo(String cargo) { this.cargo = cargo.toLowerCase().trim(); }
+    public String getCargo() {
+        return cargo;
+    }
+    public void setCargo(String cargo) {
+        this.cargo = cargo.toLowerCase().trim();
+    }
 
-    public String getTipoDocumento() { return tipoDocumento; }
-    public void setTipoDocumento(String tipoDocumento) { this.tipoDocumento = tipoDocumento; }
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
 
-    public LocalDateTime getFechaRegistro() { return fechaRegistro; }
+    public LocalDateTime getFechaRegistro() {
+        return fechaRegistro;
+    }
 }
