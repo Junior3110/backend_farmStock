@@ -3,6 +3,7 @@ package com.FarmStock_Backend.FarmStock.Model;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,19 +32,20 @@ public class Herramientas {
     private String descripcion;
 
     @NotBlank(message = "El estado no puede estar vacio")
-    @Pattern(regexp = "^(Funcional|Mantenimiento|No_disponible)", message = "El estado no es valido, deben de ser una de estas 3 (Funcional|Mantenimiento|No_disponible)")
+    @Pattern(regexp = "^(Funcional|Mantenimiento|No_disponible)$", message = "El estado no es valido, deben de ser una de estas 3 (Funcional|Mantenimiento|No_disponible)")
     private String estado;
 
     @NotBlank(message = "El tipo no puede estar vacio")
-    @Pattern(regexp = "^(Manual|Electrica)", message = "El tipo no es valido, deben de ser una de estas 2 (Manual|Electrica)")
+    @Pattern(regexp = "^(Manual|Electrica)$", message = "El tipo no es valido, deben de ser una de estas 2 (Manual|Electrica)")
     private String tipo;
 
     @NotBlank(message = "La ubicación no puede estar vacio")
-    @Pattern(regexp = "^(Bodega|Taller)", message = "La ubicacion no es valido, deben de ser una de estas 2 (Bodega|Taller)")
+    @Pattern(regexp = "^(Bodega|Taller)$", message = "La ubicacion no es valido, deben de ser una de estas 2 (Bodega|Taller)")
     private String ubicacion;
 
     @NotBlank(message = "El numero de lote no puede estar vacio")
-    @Pattern(regexp = "^(Lote 1|Lote 2)", message = "El numero de lote no es valido, deben de ser una de estas 2 (Lote 1|Lote 2)")
+    @Pattern(regexp = "^(Lote 1|Lote 2)$", message = "El numero de lote no es valido, deben de ser una de estas 2 (Lote 1|Lote 2)")
+    @JsonProperty("numero_lote")
     private String numero_lote;
 
     @NotNull(message = "La cantidad no puede estar vacía")
@@ -52,6 +54,7 @@ public class Herramientas {
     @NotNull(message = "La fecha de registro no puede ser nula")
     @PastOrPresent(message = "La fecha de registro no puede ser futura")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("fecha_registro")
     private LocalDate fecha_registro;
 
     public Herramientas(){}
