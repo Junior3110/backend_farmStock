@@ -8,4 +8,5 @@ import com.FarmStock_Backend.FarmStock.Model.Herramientas;
 
 public interface  HerramientasRepository extends JpaRepository<Herramientas, Integer> {
     Optional<Herramientas> findByNombre(String nombre);
+    Optional<Herramientas> findByIdHerramienta(Integer id);
 }

@@ -1,12 +1,11 @@
 package com.FarmStock_Backend.FarmStock.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
-import com.FarmStock_Backend.FarmStock.Model.Herramientas;
-import com.FarmStock_Backend.FarmStock.Model.Usuario;
 import com.FarmStock_Backend.FarmStock.Repository.Herramienta_detalleRepository;
 import com.FarmStock_Backend.FarmStock.Repository.HerramientasRepository;
 
@@ -40,4 +39,8 @@ public class HerramientaDetalleLogica {
         }
     }
 
-}
+    public List<Herramienta_detalle> obtenerHerramientas(Integer id){
+        return herramientaDetalleRepository.findByHerramienta_IdHerramienta(id);
+    }
+    
+} 
