@@ -32,7 +32,7 @@ public class Herramientas {
     private String descripcion;
 
     @NotBlank(message = "El estado no puede estar vacio")
-    @Pattern(regexp = "^(Funcional|Mantenimiento|No_disponible)$", message = "El estado no es valido, deben de ser una de estas 3 (Funcional|Mantenimiento|No_disponible)")
+    @Pattern(regexp = "^(Disponible|Mantenimiento|No_disponible)$", message = "El estado no es valido, deben de ser una de estas 3 (Funcional|Mantenimiento|No_disponible)")
     private String estado;
 
     @NotBlank(message = "El tipo no puede estar vacio")

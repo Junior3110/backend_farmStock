@@ -10,7 +10,7 @@ import com.FarmStock_Backend.FarmStock.Repository.UsuarioRepository;
 
 @Service
 public class UsuarioLogica {
-
+    
     private final UsuarioRepository usuarioRepository;
     
     public UsuarioLogica(UsuarioRepository usuarioRepository){

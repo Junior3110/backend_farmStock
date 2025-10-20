@@ -38,7 +38,7 @@ public class Herramienta_detalle {
 
     @NotBlank(message = "El estado no puede estar vacío")
     @Pattern(
-        regexp = "^(Disponible|Dañado|En_reparacion)$",
+        regexp = "^(Disponible|No_disponible|Mantenimiento)$",
         message = "El estado no es válido. Debe ser uno de: Disponible, Dañado o En_reparacion"
     )
     private String estado;
