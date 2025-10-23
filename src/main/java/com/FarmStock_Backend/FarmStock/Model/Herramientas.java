@@ -25,28 +25,40 @@ public class Herramientas {
     @Column(name = "id_herramienta")
     private Integer idHerramienta;
 
-    @NotBlank(message = "El nombre no puede estar vacio")
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre solo puede tener letras")
+    @NotBlank(message = "El nombre no puede estar vacío")
+    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre solo puede contener letras")
     private String nombre;
 
     private String descripcion;
 
-    @NotBlank(message = "El estado no puede estar vacio")
-    @Pattern(regexp = "^(Disponible|Mantenimiento|No_disponible)$", message = "El estado no es valido, deben de ser una de estas 3 (Funcional|Mantenimiento|No_disponible)")
+    @NotBlank(message = "El estado no puede estar vacío")
+    @Pattern(
+        regexp = "^(Disponible|Mantenimiento|No_disponible)$",
+        message = "El estado no es válido. Debe ser uno de estos: Disponible, Mantenimiento o No_disponible"
+    )
     private String estado;
 
-    @NotBlank(message = "El tipo no puede estar vacio")
-    @Pattern(regexp = "^(Manual|Electrica)$", message = "El tipo no es valido, deben de ser una de estas 2 (Manual|Electrica)")
+    @NotBlank(message = "El tipo no puede estar vacío")
+    @Pattern(
+        regexp = "^(Manual|Electrica)$",
+        message = "El tipo no es válido. Debe ser Manual o Electrica"
+    )
     private String tipo;
 
-    @NotBlank(message = "La ubicación no puede estar vacio")
-    @Pattern(regexp = "^(Bodega|Taller)$", message = "La ubicacion no es valido, deben de ser una de estas 2 (Bodega|Taller)")
+    @NotBlank(message = "La ubicación no puede estar vacía")
+    @Pattern(
+        regexp = "^(Bodega|Taller)$",
+        message = "La ubicación no es válida. Debe ser Bodega o Taller"
+    )
     private String ubicacion;
 
-    @NotBlank(message = "El numero de lote no puede estar vacio")
-    @Pattern(regexp = "^(Lote 1|Lote 2)$", message = "El numero de lote no es valido, deben de ser una de estas 2 (Lote 1|Lote 2)")
+    @NotBlank(message = "El número de lote no puede estar vacío")
+    @Pattern(
+        regexp = "^(Lote 1|Lote 2)$",
+        message = "El número de lote no es válido. Debe ser Lote 1 o Lote 2"
+    )
     @JsonProperty("numero_lote")
-    private String numero_lote;
+    private String numeroLote;
 
     @NotNull(message = "La cantidad no puede estar vacía")
     private Integer cantidad;
@@ -55,22 +67,25 @@ public class Herramientas {
     @PastOrPresent(message = "La fecha de registro no puede ser futura")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_registro")
-    private LocalDate fecha_registro;
+    private LocalDate fechaRegistro;
 
-    public Herramientas(){}
+    // ===== Constructores =====
 
-     public Herramientas(String nombre, String descripcion, String estado, String tipo, 
-                        String ubicacion, String numero_lote, Integer cantidad, 
-                        LocalDate fecha_registro) {
+    public Herramientas() {}
+
+    public Herramientas(String nombre, String descripcion, String estado, String tipo,
+                        String ubicacion, String numeroLote, Integer cantidad,
+                        LocalDate fechaRegistro) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.estado = estado;
         this.tipo = tipo;
         this.ubicacion = ubicacion;
-        this.numero_lote = numero_lote;
+        this.numeroLote = numeroLote;
         this.cantidad = cantidad;
-        this.fecha_registro = fecha_registro;
+        this.fechaRegistro = fechaRegistro;
     }
+
     // ===== Getters y Setters =====
 
     public Integer getIdHerramienta() {
@@ -121,12 +136,12 @@ public class Herramientas {
         this.ubicacion = ubicacion;
     }
 
-    public String getNumero_lote() {
-        return numero_lote;
+    public String getNumeroLote() {
+        return numeroLote;
     }
 
-    public void setNumero_lote(String numero_lote) {
-        this.numero_lote = numero_lote;
+    public void setNumeroLote(String numeroLote) {
+        this.numeroLote = numeroLote;
     }
 
     public Integer getCantidad() {
@@ -137,11 +152,11 @@ public class Herramientas {
         this.cantidad = cantidad;
     }
 
-    public LocalDate getFecha_registro() {
-        return fecha_registro;
+    public LocalDate getFechaRegistro() {
+        return fechaRegistro;
     }
 
-    public void setFecha_registro(LocalDate fecha_registro) {
-        this.fecha_registro = fecha_registro;
+    public void setFechaRegistro(LocalDate fechaRegistro) {
+        this.fechaRegistro = fechaRegistro;
     }
 }

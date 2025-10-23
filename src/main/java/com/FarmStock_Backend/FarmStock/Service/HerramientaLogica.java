@@ -20,10 +20,10 @@ public class HerramientaLogica {
     }
 
     public Herramientas crearHerramienta(Herramientas herramienta) {
-        // 1️⃣ Guardamos la herramienta general
+        // 1️ Guardamos la herramienta general
         Herramientas herramientaGuardada = herramientasRepository.save(herramienta);
 
-        // 2️⃣ Generamos los detalles individuales (por ejemplo, 10 palas)
+        // 2️ Generamos los detalles individuales (por ejemplo, 10 palas)
         int cantidad = herramientaGuardada.getCantidad();
 
         for (int i = 1; i <= cantidad; i++) {
@@ -39,7 +39,7 @@ public class HerramientaLogica {
             detalle.setEstado("Disponible");
 
             detalle.setDisponible(true);
-            detalle.setFechaIngreso(herramientaGuardada.getFecha_registro());
+            detalle.setFechaIngreso(herramientaGuardada.getFechaRegistro());
 
             herramientaDetalleRepository.save(detalle);
         }
