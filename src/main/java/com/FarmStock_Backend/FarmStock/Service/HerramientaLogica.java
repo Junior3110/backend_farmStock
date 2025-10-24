@@ -1,5 +1,8 @@
 package com.FarmStock_Backend.FarmStock.Service;
 
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
@@ -47,5 +50,13 @@ public class HerramientaLogica {
         return herramientaGuardada;
     }
 
-    
+    public List<Herramientas> obtenerHerramientasDeHoy() {
+        LocalDate hoy = LocalDate.now();
+        return herramientasRepository.findByFechaRegistro(hoy);
+    }
+
+    public List<Herramientas> obtenerTodasHerramientas() {
+        return herramientasRepository.findAll();
+    }
+
 }
