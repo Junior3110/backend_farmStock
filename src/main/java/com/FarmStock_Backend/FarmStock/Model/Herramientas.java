@@ -3,21 +3,15 @@ package com.FarmStock_Backend.FarmStock.Model;
 import java.time.LocalDate;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Pattern;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
 
 @Entity
 @Table(name = "herramienta")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Herramientas {
 
     @Id
@@ -26,137 +20,59 @@ public class Herramientas {
     private Integer idHerramienta;
 
     @NotBlank(message = "El nombre no puede estar vacío")
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre solo puede contener letras")
+    @Column(name = "nombre")
     private String nombre;
 
+    @Column(name = "descripcion")
     private String descripcion;
 
     @NotBlank(message = "El estado no puede estar vacío")
-    @Pattern(
-        regexp = "^(Disponible|Mantenimiento|No_disponible)$",
-        message = "El estado no es válido. Debe ser uno de estos: Disponible, Mantenimiento o No_disponible"
-    )
+    @Column(name = "estado")
     private String estado;
 
     @NotBlank(message = "El tipo no puede estar vacío")
-    @Pattern(
-        regexp = "^(Manual|Electrica)$",
-        message = "El tipo no es válido. Debe ser Manual o Electrica"
-    )
+    @Column(name = "tipo")
     private String tipo;
 
     @NotBlank(message = "La ubicación no puede estar vacía")
-    @Pattern(
-        regexp = "^(Bodega|Taller)$",
-        message = "La ubicación no es válida. Debe ser Bodega o Taller"
-    )
+    @Column(name = "ubicacion")
     private String ubicacion;
 
     @NotBlank(message = "El número de lote no puede estar vacío")
-    @Pattern(
-        regexp = "^(Lote 1|Lote 2)$",
-        message = "El número de lote no es válido. Debe ser Lote 1 o Lote 2"
-    )
+    @Column(name = "numero_lote")
     @JsonProperty("numero_lote")
     private String numeroLote;
 
     @NotNull(message = "La cantidad no puede estar vacía")
+    @Column(name = "cantidad")
     private Integer cantidad;
 
     @NotNull(message = "La fecha de registro no puede ser nula")
     @PastOrPresent(message = "La fecha de registro no puede ser futura")
+    @Column(name = "fecha_registro")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("fecha_registro")
     private LocalDate fechaRegistro;
 
-    // ===== Constructores =====
-
     public Herramientas() {}
 
-    public Herramientas(String nombre, String descripcion, String estado, String tipo,
-                        String ubicacion, String numeroLote, Integer cantidad,
-                        LocalDate fechaRegistro) {
-        this.nombre = nombre;
-        this.descripcion = descripcion;
-        this.estado = estado;
-        this.tipo = tipo;
-        this.ubicacion = ubicacion;
-        this.numeroLote = numeroLote;
-        this.cantidad = cantidad;
-        this.fechaRegistro = fechaRegistro;
-    }
-
-    // ===== Getters y Setters =====
-
-    public Integer getIdHerramienta() {
-        return idHerramienta;
-    }
-
-    public void setIdHerramienta(Integer idHerramienta) {
-        this.idHerramienta = idHerramienta;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
-
-    public String getEstado() {
-        return estado;
-    }
-
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(String ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
-    public String getNumeroLote() {
-        return numeroLote;
-    }
-
-    public void setNumeroLote(String numeroLote) {
-        this.numeroLote = numeroLote;
-    }
-
-    public Integer getCantidad() {
-        return cantidad;
-    }
-
-    public void setCantidad(Integer cantidad) {
-        this.cantidad = cantidad;
-    }
-
-    public LocalDate getFechaRegistro() {
-        return fechaRegistro;
-    }
-
-    public void setFechaRegistro(LocalDate fechaRegistro) {
-        this.fechaRegistro = fechaRegistro;
-    }
+    // getters / setters
+    public Integer getIdHerramienta() { return idHerramienta; }
+    public void setIdHerramienta(Integer idHerramienta) { this.idHerramienta = idHerramienta; }
+    public String getNombre() { return nombre; }
+    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+    public String getUbicacion() { return ubicacion; }
+    public void setUbicacion(String ubicacion) { this.ubicacion = ubicacion; }
+    public String getNumeroLote() { return numeroLote; }
+    public void setNumeroLote(String numeroLote) { this.numeroLote = numeroLote; }
+    public Integer getCantidad() { return cantidad; }
+    public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
+    public LocalDate getFechaRegistro() { return fechaRegistro; }
+    public void setFechaRegistro(LocalDate fechaRegistro) { this.fechaRegistro = fechaRegistro; }
 }
