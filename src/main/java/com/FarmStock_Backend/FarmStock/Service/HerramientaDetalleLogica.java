@@ -29,7 +29,7 @@ public class HerramientaDetalleLogica {
             Herramienta_detalle detalleExistente = detalleOptional.get();
             detalleExistente.setEstado(detalleActualizado.getEstado());
             detalleExistente.setDisponible(detalleActualizado.getDisponible());
-            detalleExistente.setFechaIngreso(detalleActualizado.getFechaIngreso());
+            detalleActualizado.getFechaIngreso();
             return herramientaDetalleRepository.save(detalleExistente);
         } else {
             throw new IllegalArgumentException("No se encontró el detalle de herramienta con id: " + id);

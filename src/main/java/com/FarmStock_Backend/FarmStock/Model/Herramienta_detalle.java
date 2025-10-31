@@ -47,6 +47,8 @@ public class Herramienta_detalle {
     @NotNull
     @Column(name = "disponible")
     private Boolean disponible;
+    
+    
 
     @NotNull
     @PastOrPresent
