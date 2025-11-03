@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 
 @Entity
-@Table(name="usuario")
+@Table(name = "usuario")
 public class Usuario {
 
     @Id
@@ -37,24 +37,14 @@ public class Usuario {
     @Pattern(regexp = "^[0-9]{7,15}$", message = "El teléfono debe tener entre 7 y 15 dígitos")
     private String telefono;
 
-    @NotBlank(message = "El nombre de formación no puede estar vacío")
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$", message = "El nombre de formación solo puede contener letras")
-    @Column(name = "nombre_formacion")
-    private String nombreFormacion;
-
-    @NotBlank(message = "El número de ficha no puede estar vacío")
-    @Pattern(regexp = "^[0-9]+$", message = "El número de ficha debe contener solo dígitos")
-    @Column(name = "numero_ficha")
-    private String numeroFicha;
-
     @NotBlank(message = "El número de documento no puede estar vacío")
     @Pattern(regexp = "^[0-9]+$", message = "El número de documento debe contener solo dígitos")
     @Column(name = "numero_documento")
     private String numeroDocumento;
 
     @Pattern(
-    regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!¿?*.,:;_-]).{8,}$",
-    message = "La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial"
+        regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=!¿?*.,:;_-]).{8,}$",
+        message = "La contraseña debe tener mínimo 8 caracteres, incluir mayúscula, minúscula, número y carácter especial"
     )
     private String contrasena;
 
@@ -73,14 +63,11 @@ public class Usuario {
     public Usuario() {}
 
     public Usuario(String nombres, String apellidos, String correo, String telefono,
-                   String nombreFormacion, String numeroFicha, String numeroDocumento,
-                   String cargo, String tipoDocumento, String contrasena) {
+                   String numeroDocumento, String cargo, String tipoDocumento, String contrasena) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.correo = correo;
         this.telefono = telefono;
-        this.nombreFormacion = nombreFormacion;
-        this.numeroFicha = numeroFicha;
         this.numeroDocumento = numeroDocumento;
         this.cargo = cargo;
         this.tipoDocumento = tipoDocumento;
@@ -88,7 +75,7 @@ public class Usuario {
     }
 
     // Getters y setters
-    public Integer getId() {
+    public Integer getIdUsuario() {
         return idUsuario;
     }
 
@@ -120,25 +107,11 @@ public class Usuario {
         this.telefono = telefono.trim();
     }
 
-    public String getNombreFormacion() {
-        return nombreFormacion;
-    }
-    public void setNombreFormacion(String nombreFormacion) {
-        this.nombreFormacion = nombreFormacion.trim();
-    }
-
-    public String getNumeroFicha() {
-        return numeroFicha;
-    }
-    public void setNumeroFicha(String numeroFicha) {
-        this.numeroFicha = numeroFicha;
-    }
-
     public String getNumeroDocumento() {
         return numeroDocumento;
     }
     public void setNumeroDocumento(String numeroDocumento) {
-        this.numeroDocumento = numeroDocumento;
+        this.numeroDocumento = numeroDocumento.trim();
     }
 
     public String getContrasena() {

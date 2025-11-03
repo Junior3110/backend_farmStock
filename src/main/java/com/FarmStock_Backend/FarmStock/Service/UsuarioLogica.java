@@ -54,8 +54,6 @@ public class UsuarioLogica {
             usuario1.setApellidos(usuario.getApellidos());
             usuario1.setCorreo(usuario.getCorreo());
             usuario1.setTelefono(usuario.getTelefono());
-            usuario1.setNombreFormacion(usuario.getNombreFormacion());
-            usuario1.setNumeroFicha(usuario.getNumeroFicha());
             usuario1.setNumeroDocumento(usuario.getNumeroDocumento());
             usuario1.setContrasena(usuario.getContrasena());
             usuario1.setCargo(usuario.getCargo());

@@ -1,4 +1,4 @@
-package com;
+package com.FarmStock_Backend.FarmStock;
 
 import java.time.LocalDate;
 import java.util.List;
