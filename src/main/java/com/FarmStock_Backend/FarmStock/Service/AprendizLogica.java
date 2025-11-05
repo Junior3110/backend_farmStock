@@ -17,7 +17,7 @@ public class AprendizLogica {
         this.aprendizRepository = aprendizRepository;
     }
 
-    // ✅ Crear aprendiz
+    
     public Aprendiz crearAprendiz(Aprendiz aprendiz) {
         // Verificar si ya existe un aprendiz con ese número de documento
         Optional<Aprendiz> existente = aprendizRepository.findByNumeroDocumento(aprendiz.getNumeroDocumento());
@@ -27,18 +27,18 @@ public class AprendizLogica {
         return aprendizRepository.save(aprendiz);
     }
 
-    // ✅ Ver todos los aprendices
+    
     public List<Aprendiz> verAprendices() {
         return aprendizRepository.findAll();
     }
 
-    // ✅ Buscar aprendiz por ID
+    
     public Aprendiz buscarAprendiz(Integer idAprendiz) {
         return aprendizRepository.findById(idAprendiz)
             .orElseThrow(() -> new IllegalArgumentException("No se encontró el aprendiz con id: " + idAprendiz));
     }
 
-    // ✅ Buscar aprendiz por tipo y número de documento
+
     public Aprendiz buscarPorDocumento(String tipoDocumento, String numeroDocumento) {
         return aprendizRepository.findByTipoDocumentoAndNumeroDocumento(tipoDocumento, numeroDocumento)
             .orElseThrow(() -> new IllegalArgumentException(
@@ -46,7 +46,7 @@ public class AprendizLogica {
             ));
     }
 
-    // ✅ Actualizar aprendiz
+    
     public Aprendiz actualizarAprendiz(Integer idAprendiz, Aprendiz aprendiz) {
         Optional<Aprendiz> opt = aprendizRepository.findById(idAprendiz);
         if (opt.isPresent()) {
@@ -61,7 +61,7 @@ public class AprendizLogica {
         }
     }
 
-    // ✅ Eliminar aprendiz
+    
     public void eliminarAprendiz(Integer idAprendiz) {
         if (aprendizRepository.existsById(idAprendiz)) {
             aprendizRepository.deleteById(idAprendiz);

@@ -1,7 +1,12 @@
 package com.FarmStock_Backend.FarmStock.Service;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import org.springframework.stereotype.Service;
 
@@ -9,40 +14,48 @@ import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
 import com.FarmStock_Backend.FarmStock.Model.Herramientas;
 import com.FarmStock_Backend.FarmStock.Repository.Herramienta_detalleRepository;
 import com.FarmStock_Backend.FarmStock.Repository.HerramientasRepository;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
 
 @Service
 public class HerramientaDetalleLogica {
+
     private final Herramienta_detalleRepository herramientaDetalleRepository;
     private final HerramientasRepository herramientasRepository;
 
-    // Constructor con ambas dependencias
     public HerramientaDetalleLogica(Herramienta_detalleRepository herramientaDetalleRepository,
                                     HerramientasRepository herramientasRepository) {
         this.herramientaDetalleRepository = herramientaDetalleRepository;
         this.herramientasRepository = herramientasRepository;
     }
 
+    // 🔧 Actualizar herramienta detalle
     public Herramienta_detalle actualizarHerramientaDetalle(Integer id, Herramienta_detalle detalleActualizado) {
         Optional<Herramienta_detalle> detalleOptional = herramientaDetalleRepository.findById(id);
 
         if (detalleOptional.isPresent()) {
             Herramienta_detalle detalleExistente = detalleOptional.get();
+
             detalleExistente.setEstado(detalleActualizado.getEstado());
             detalleExistente.setDisponible(detalleActualizado.getDisponible());
-            detalleActualizado.getFechaIngreso();
+            detalleExistente.setFechaIngreso(detalleActualizado.getFechaIngreso());
+
             return herramientaDetalleRepository.save(detalleExistente);
         } else {
             throw new IllegalArgumentException("No se encontró el detalle de herramienta con id: " + id);
         }
     }
 
-    public List<Herramienta_detalle> obtenerHerramientas(Integer id){
+    // 🔍 Obtener herramientas por ID
+    public List<Herramienta_detalle> obtenerHerramientas(Integer id) {
         return herramientaDetalleRepository.findByHerramienta_IdHerramienta(id);
     }
 
-    // Implementación de crearHerramienta que el test espera
+    // 🛠️ Crear herramienta y generar códigos
     public Herramientas crearHerramienta(Herramientas herramienta) {
-        // Guardar la herramienta principal
         Herramientas saved = herramientasRepository.save(herramienta);
 
         Integer cantidad = saved.getCantidad() != null ? saved.getCantidad() : 0;
@@ -55,11 +68,65 @@ public class HerramientaDetalleLogica {
             detalle.setEstado("Disponible");
             detalle.setDisponible(true);
             detalle.setFechaIngreso(saved.getFechaRegistro());
+
+            // Generar código único
             String codigo = String.format("%s-%d-%03d", nombreUpper, idHerr, i);
             detalle.setCodigoUnico(codigo);
+
+            // Guardar el detalle
             herramientaDetalleRepository.save(detalle);
+
+            // Generar QR y código de barras automáticamente
+            generarCodigoQR(codigo, "qr_" + codigo + ".png");
+            generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
         }
 
         return saved;
+    }
+
+    // 🧾 Generar código QR
+    public static void generarCodigoQR(String texto, String nombreArchivo) {
+        try {
+            int width = 250;
+            int height = 250;
+
+            BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.QR_CODE, width, height);
+            BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
+
+            File directorio = new File("codigos_qr");
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            File outputFile = new File(directorio, nombreArchivo);
+            ImageIO.write(image, "png", outputFile);
+
+            System.out.println("✅ Código QR generado: " + outputFile.getAbsolutePath());
+        } catch (WriterException | IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 🧾 Generar código de barras
+    public static void generarCodigoDeBarras(String texto, String nombreArchivo) {
+        try {
+            int width = 400;
+            int height = 150;
+
+            BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.CODE_128, width, height);
+            BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
+
+            File directorio = new File("codigos_barras");
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+
+            File outputFile = new File(directorio, nombreArchivo);
+            ImageIO.write(image, "png", outputFile);
+
+            System.out.println("✅ Código de barras generado: " + outputFile.getAbsolutePath());
+        } catch (WriterException | IOException e) {
+            e.printStackTrace();
+        }
     }
 }

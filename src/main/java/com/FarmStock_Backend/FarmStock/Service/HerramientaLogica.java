@@ -10,6 +10,7 @@ import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
 import com.FarmStock_Backend.FarmStock.Model.Herramientas;
 import com.FarmStock_Backend.FarmStock.Repository.Herramienta_detalleRepository;
 import com.FarmStock_Backend.FarmStock.Repository.HerramientasRepository;
+import com.FarmStock_Backend.FarmStock.Service.HerramientaDetalleLogica;
 
 @Service
 public class HerramientaLogica {
@@ -24,24 +25,29 @@ public class HerramientaLogica {
     }
 
     public Herramientas crearHerramienta(Herramientas herramienta) {
-        Herramientas herramientaGuardada = herramientasRepository.save(herramienta);
+            Herramientas herramientaGuardada = herramientasRepository.save(herramienta);
 
-        int cantidad = herramientaGuardada.getCantidad() != null ? herramientaGuardada.getCantidad() : 0;
-        for (int i = 1; i <= cantidad; i++) {
-            Herramienta_detalle detalle = new Herramienta_detalle();
-            detalle.setHerramienta(herramientaGuardada);
-            String codigo = herramientaGuardada.getNombre().toUpperCase() + "-" 
-               + herramientaGuardada.getIdHerramienta() + "-" 
-               + String.format("%03d", i);
-            detalle.setCodigoUnico(codigo);
-            detalle.setEstado("Disponible");
-            detalle.setDisponible(true);
-            detalle.setFechaIngreso(herramientaGuardada.getFechaRegistro());
-            herramientaDetalleRepository.save(detalle);
+            int cantidad = herramientaGuardada.getCantidad() != null ? herramientaGuardada.getCantidad() : 0;
+
+            for (int i = 1; i <= cantidad; i++) {
+                Herramienta_detalle detalle = new Herramienta_detalle();
+                detalle.setHerramienta(herramientaGuardada);
+                String codigo = herramientaGuardada.getNombre().toUpperCase() + "-" 
+                + herramientaGuardada.getIdHerramienta() + "-" 
+                + String.format("%03d", i);
+                detalle.setCodigoUnico(codigo);
+                detalle.setEstado("Disponible");
+                detalle.setDisponible(true);
+                detalle.setFechaIngreso(herramientaGuardada.getFechaRegistro());
+                herramientaDetalleRepository.save(detalle);
+
+                // 👇 Llamas los métodos desde HerramientaDetalleLogica
+                HerramientaDetalleLogica.generarCodigoQR(codigo, "qr_" + codigo + ".png");
+                HerramientaDetalleLogica.generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
+            }
+
+            return herramientaGuardada;
         }
-
-        return herramientaGuardada;
-    }
 
     public List<Herramientas> obtenerHerramientasDeHoy() {
         LocalDate hoy = LocalDate.now();
