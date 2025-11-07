@@ -10,7 +10,6 @@ import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
 import com.FarmStock_Backend.FarmStock.Model.Herramientas;
 import com.FarmStock_Backend.FarmStock.Repository.Herramienta_detalleRepository;
 import com.FarmStock_Backend.FarmStock.Repository.HerramientasRepository;
-import com.FarmStock_Backend.FarmStock.Service.HerramientaDetalleLogica;
 
 @Service
 public class HerramientaLogica {
