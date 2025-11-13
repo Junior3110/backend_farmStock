@@ -66,12 +66,20 @@ public class UsuarioLogica {
     }
 
 
-    public String login(String numeroDocumento, String contrasena){
+    public String login(String numeroDocumento, String contrasena, String tipoDocumento, String cargo){
         Usuario usuario1 = usuarioRepository.findByNumeroDocumento(numeroDocumento)
             .orElseThrow(() -> new IllegalArgumentException("Numero no encontrado"));
         
         if (!usuario1.getContrasena().equals(contrasena)) {
             throw new IllegalArgumentException("Contraseña Incorrecta");
+        }
+
+        if (!usuario1.getTipoDocumento().equals(tipoDocumento)){
+            throw new IllegalArgumentException("Tipo de documento no valido");
+        }
+
+        if (!usuario1.getCargo().equals(cargo)){
+            throw new IllegalArgumentException("Tipo de cargo no valido");
         }
 
         return "Iniciando sesión";

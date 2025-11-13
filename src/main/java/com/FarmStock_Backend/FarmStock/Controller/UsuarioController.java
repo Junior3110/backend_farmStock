@@ -83,7 +83,9 @@ public class UsuarioController {
         try {
             String mensaje = service.login(
                     datosLogin.getNumeroDocumento(),
-                    datosLogin.getContrasena()
+                    datosLogin.getContrasena(),
+                    datosLogin.getTipoDocumento(),
+                    datosLogin.getCargo()
             );
             return ResponseEntity.ok(mensaje);
         } catch (IllegalArgumentException e) {
