@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
 import com.FarmStock_Backend.FarmStock.Service.HerramientaDetalleLogica;
-
+//lka haga drop datanbase
 @RestController
 @RequestMapping("/api/herramienta-detalle")
 @CrossOrigin(origins = "*")

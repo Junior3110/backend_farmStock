@@ -23,6 +23,13 @@ public class HerramientaLogica {
         this.herramientaDetalleRepository = herramientaDetalleRepository;
     }
 
+    /**
+     * Crea una herramienta y genera sus detalles (unidades físicas).
+     * - Guarda la herramienta base.
+     * - Crea N registros en detalle según 'cantidad' con código único:
+     *   NOMBRE-MAYUS-ID_HERRAMIENTA-XXX y los marca como 'Disponible'.
+     * - Genera QR y código de barras para cada detalle.
+     */
     public Herramientas crearHerramienta(Herramientas herramienta) {
             Herramientas herramientaGuardada = herramientasRepository.save(herramienta);
 
@@ -48,20 +55,34 @@ public class HerramientaLogica {
             return herramientaGuardada;
         }
 
+    /**
+     * Lista herramientas registradas en la fecha actual (hoy).
+     */
     public List<Herramientas> obtenerHerramientasDeHoy() {
         LocalDate hoy = LocalDate.now();
         return herramientasRepository.findByFechaRegistro(hoy);
     }
 
+    /**
+     * Lista todas las herramientas existentes.
+     */
     public List<Herramientas> obtenerTodasHerramientas() {
         return herramientasRepository.findAll();
     }
 
+    /**
+     * Obtiene una herramienta por su ID o lanza error si no existe.
+     */
     public Herramientas obtenerPorId(Integer id) {
         Optional<Herramientas> opt = herramientasRepository.findById(id);
         return opt.orElseThrow(() -> new IllegalArgumentException("No se encontró herramienta con id: " + id));
     }
 
+    /**
+     * Actualiza datos de la herramienta y sincroniza la cantidad con sus detalles:
+     * - Si aumenta la cantidad, crea nuevos detalles y códigos.
+     * - Si disminuye, elimina detalles sobrantes (del final de la lista).
+     */
     public Herramientas actualizarHerramienta(Integer id, Herramientas herramienta) {
         Optional<Herramientas> opt = herramientasRepository.findById(id);
         if (!opt.isPresent()) {
@@ -107,6 +128,10 @@ public class HerramientaLogica {
         return guardada;
     }
 
+    /**
+     * Elimina una herramienta y sus detalles asociados.
+     * - Primero borra los detalles para evitar referencias huérfanas.
+     */
     public void eliminarHerramienta(Integer id) {
         Optional<Herramientas> opt = herramientasRepository.findById(id);
         if (!opt.isPresent()) {

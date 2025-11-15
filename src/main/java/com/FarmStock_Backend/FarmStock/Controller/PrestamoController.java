@@ -30,14 +30,22 @@ public class PrestamoController {
         this.prestamoLogica = prestamoLogica;
     }
 
-    // Crear un préstamo (requiere un código de herramienta y el objeto préstamo)
+    /**
+     * POST /prestamos/crear
+     * Registra un nuevo préstamo de herramienta a un aprendiz
+     * Requiere: codigoUnico (herramienta), idUsuario (quien presta), numeroDocumento (aprendiz)
+     */
     @PostMapping("/crear")
     public ResponseEntity<Prestamo> crearPrestamo(@RequestParam String codigoUnico,@RequestParam Integer idUsuario, @RequestParam String numeroDocumento, @RequestBody Prestamo prestamo) {
         Prestamo creado = prestamoLogica.crearPrestamo(codigoUnico, idUsuario, numeroDocumento,  prestamo);
         
         return ResponseEntity.ok(creado);
     }
-    // devolucion 
+    /**
+     * PUT /prestamos/devolver/codigo/{codigoUnico}
+     * Procesa la devolución de una herramienta prestada
+     * Registra fecha/hora de devolución y cambia estado a "Finalizado"
+     */
     @PutMapping("/devolver/codigo/{codigoUnico}")
     public ResponseEntity<?> devolverPorCodigo(@PathVariable String codigoUnico) {
         try {
@@ -50,34 +58,80 @@ public class PrestamoController {
     }
 
 
-    // Listar todos los préstamos
+    /**
+     * GET /prestamos/todos
+     * Lista todos los préstamos del sistema (activos, finalizados, vencidos)
+     */
     @GetMapping("/todos")
     public ResponseEntity<List<Prestamo>> listarTodosLosPrestamos() {
         return ResponseEntity.ok(prestamoLogica.obtenerTodosLosPrestamos());
     }
 
-    // Obtener un préstamo por ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Prestamo> obtenerPrestamoPorId(@PathVariable Integer id) {
-        Optional<Prestamo> prestamo = prestamoLogica.obtenerPrestamoPorId(id);
-        return prestamo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    /**
+     * GET /prestamos/activos
+     * Lista solo los préstamos activos (sin devolver)
+     * Usado para mostrar la tabla "Registro Salida" en el frontend
+     */
+    @GetMapping("/activos")
+    public ResponseEntity<List<Prestamo>> listarPrestamosActivos() {
+        return ResponseEntity.ok(prestamoLogica.obtenerTodosLosPrestamosActivos());
     }
 
-    // Actualizar un préstamo
+    /**
+     * GET /prestamos/activo/codigo/{codigoUnico}
+     * Busca un préstamo activo específico por código de herramienta
+     * Retorna error si no hay préstamo activo con ese código
+     */
+    @GetMapping("/activo/codigo/{codigoUnico}")
+    public ResponseEntity<?> obtenerPrestamoActivoPorCodigo(@PathVariable String codigoUnico) {
+        try {
+            Prestamo prestamo = prestamoLogica.obtenerPrestamoActivo(codigoUnico);
+            return ResponseEntity.ok(prestamo);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * GET /prestamos/codigo/{codigoUnico}
+     * Busca un préstamo activo por código único de herramienta
+     * Solo retorna si el préstamo está activo (sin devolver)
+     */
+    @GetMapping("/codigo/{codigoUnico}")
+    public ResponseEntity<?> obtenerPrestamoPorCodigo(@PathVariable String codigoUnico) {
+        Optional<Prestamo> prestamo = prestamoLogica.obtenerPrestamoPorCodigoUnico(codigoUnico);
+        if (prestamo.isPresent()) {
+            return ResponseEntity.ok(prestamo.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("No hay préstamo activo para el código: " + codigoUnico);
+        }
+    }
+
+    /**
+     * PUT /prestamos/{id}
+     * Actualiza los datos de un préstamo existente
+     */
     @PutMapping("/{id}")
     public ResponseEntity<Prestamo> actualizarPrestamo(@PathVariable Integer id, @RequestBody Prestamo prestamoActualizado) {
         Prestamo actualizado = prestamoLogica.actualizarPrestamo(id, prestamoActualizado);
         return ResponseEntity.ok(actualizado);
     }
 
-    // Eliminar un préstamo
+    /**
+     * DELETE /prestamos/{id}
+     * Elimina un préstamo del sistema por su ID
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarPrestamo(@PathVariable Integer id) {
         prestamoLogica.eliminarPrestamo(id);
         return ResponseEntity.noContent().build();
     }
 
-    // Obtener préstamos por usuario
+    /**
+     * GET /prestamos/usuario/{idUsuario}
+     * Lista todos los préstamos realizados por un usuario específico
+     */
     @GetMapping("/usuario/{idUsuario}")
     public ResponseEntity<List<Prestamo>> obtenerPrestamosPorUsuario(@PathVariable Integer idUsuario) {
         List<Prestamo> prestamos = prestamoLogica.obtenerPrestamosPorUsuario(idUsuario);

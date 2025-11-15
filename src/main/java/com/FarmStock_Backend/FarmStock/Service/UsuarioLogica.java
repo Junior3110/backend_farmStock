@@ -17,12 +17,17 @@ public class UsuarioLogica {
         this.usuarioRepository = usuarioRepository;
     }
 
-    // Crear usuario
+    /**
+     * Crea (registra) un nuevo usuario en el sistema.
+     */
     public Usuario crearUsuario(Usuario usuario){
         return usuarioRepository.save(usuario);
     }
 
-    // Eliminar usuario (devuelve void o el usuario eliminado)
+    /**
+     * Elimina un usuario por ID.
+     * Lanza error si el usuario no existe.
+     */
     public Usuario eliminarUsuario(Integer id ){
         if(usuarioRepository.existsById(id)){
             usuarioRepository.deleteById(id);
@@ -32,18 +37,25 @@ public class UsuarioLogica {
         return null;
     }
     
-    // Ver todos los usuarios
+    /**
+     * Retorna la lista de todos los usuarios.
+     */
     public List<Usuario> verUsuarios(){
         return usuarioRepository.findAll();
     }
 
-    // Buscar usuario por ID
+    /**
+     * Busca un usuario por su ID o lanza error si no existe.
+     */
     public Usuario buscarUsuario(Integer id){
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario con id: " + id));
     }
 
-    // Actualizar usuario
+    /**
+     * Actualiza los datos del usuario indicado por ID.
+     * Copia los campos permitidos del DTO recibido y guarda los cambios.
+     */
     public Usuario actualizarUsuario(Integer id, Usuario usuario){
         Optional<Usuario> usuOptional = usuarioRepository.findById(id);
 
@@ -66,6 +78,10 @@ public class UsuarioLogica {
     }
 
 
+    /**
+     * Valida las credenciales del usuario y sus atributos básicos de acceso.
+     * Verifica: contraseña, tipo de documento y cargo.
+     */
     public String login(String numeroDocumento, String contrasena, String tipoDocumento, String cargo){
         Usuario usuario1 = usuarioRepository.findByNumeroDocumento(numeroDocumento)
             .orElseThrow(() -> new IllegalArgumentException("Numero no encontrado"));

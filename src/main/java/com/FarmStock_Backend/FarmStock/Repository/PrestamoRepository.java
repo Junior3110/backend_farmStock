@@ -11,11 +11,10 @@ import com.FarmStock_Backend.FarmStock.Model.Prestamo;
 @Repository
 public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
 
-
-
+    
     List<Prestamo> findByUsuario_IdUsuario(Integer idUsuario);
 
-
-
     Optional<Prestamo> findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(String codigoUnico);
+
+    List<Prestamo> findByEstado(String estado);
 }

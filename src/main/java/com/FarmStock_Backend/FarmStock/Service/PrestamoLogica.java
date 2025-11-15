@@ -33,6 +33,11 @@ public class PrestamoLogica {
         this.aprendizRepository = aprendizRepository; 
     }
 
+    /**
+     * Crea un nuevo préstamo de herramienta
+     * Busca la herramienta por código único, el usuario por ID y el aprendiz por número de documento
+     * Asocia todos estos datos al préstamo y lo guarda en la base de datos
+     */
     public Prestamo crearPrestamo(String codigo, Integer idUsuario, String numeroDocumento, Prestamo prestamo) {
         Herramienta_detalle herramientaDetalle = herramientadetalleRepository.findByCodigoUnico(codigo)
             .orElseThrow(() -> new RuntimeException("no se encontro ninguna herramienta con este codigo: " + codigo));
@@ -50,38 +55,84 @@ public class PrestamoLogica {
         return prestamoRepository.save(prestamo);
     }
 
-    // falta metodo de devolver la herrmaienta 
-public Prestamo aceptarDevolucionPorCodigo(String codigo) {
-    try {
-        Prestamo prestamo = prestamoRepository
-            .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigo)
-            .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigo));
+    /**
+     * Procesa la devolución de una herramienta
+     * Busca el préstamo activo por código único, registra la fecha de devolución
+     * y cambia el estado del préstamo a "Finalizado"
+     */
+    public Prestamo aceptarDevolucionPorCodigo(String codigo) {
+        try {
+            Prestamo prestamo = prestamoRepository
+                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigo)
+                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigo));
 
-        prestamo.setFechaDevolucion(LocalDateTime.now());
-        prestamo.setEstado("Finalizado");
+            prestamo.setFechaDevolucion(LocalDateTime.now());
+            prestamo.setEstado("Finalizado");
 
-        Prestamo saved = prestamoRepository.save(prestamo);
-        return saved;
-    } catch (Exception ex) {
-        // log completo para ver la causa real
-        ex.printStackTrace();
-        // vuelve a lanzar para que el controlador lo capture o devolvemos un runtime con mensaje más claro
-        throw new RuntimeException("Error al devolver préstamo: " + ex.getClass().getSimpleName() + " - " + ex.getMessage(), ex);
+            Prestamo saved = prestamoRepository.save(prestamo);
+            return saved;
+        } catch (Exception ex) {
+            // log completo para ver la causa real
+            ex.printStackTrace();
+            // vuelve a lanzar para que el controlador lo capture o devolvemos un runtime con mensaje más claro
+            throw new RuntimeException("Error al devolver préstamo: " + ex.getClass().getSimpleName() + " - " + ex.getMessage(), ex);
+        }
     }
-}
+    /**
+     * Obtiene un préstamo activo específico por código único
+     * Verifica que el préstamo exista, no tenga fecha de devolución y esté en estado "Activo"
+     */
+    public Prestamo obtenerPrestamoActivo(String codigo) {
+        Prestamo prestamo = prestamoRepository
+                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigo)
+                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigo));
+        
+        if (!prestamo.getEstado().equals("Activo")) {
+            throw new RuntimeException("La herramienta ya se devolvió o no está en préstamo activo");
+        }
+        
+        return prestamo;
+    }
+    
+    /**
+     * Lista todos los préstamos activos del sistema
+     * Filtra los préstamos que tienen estado "Activo" y no tienen fecha de devolución
+     * Usado para mostrar la tabla de "Registro Salida" en el frontend
+     */
+    public List<Prestamo> obtenerTodosLosPrestamosActivos() {
+        return prestamoRepository.findAll().stream()
+                .filter(p -> p.getEstado().equals("Activo") && p.getFechaDevolucion() == null)
+                .toList();
+    }
+
+
+
+
+
+
+
 
     
-    // Método para obtener todos los préstamos
+    /**
+     * Obtiene todos los préstamos registrados en el sistema
+     * Incluye préstamos activos, finalizados y vencidos
+     */
     public List<Prestamo> obtenerTodosLosPrestamos() {
         return prestamoRepository.findAll(); 
     }
 
-    // Método para obtener un préstamo por ID --  arreglar por codigo QR y estado activo si esta en prestamo 
-    public Optional<Prestamo> obtenerPrestamoPorId(Integer idPrestamo) {
-        return prestamoRepository.findById(idPrestamo); 
+    /**
+     * Busca un préstamo activo por el código único de la herramienta
+     * Solo retorna el préstamo si está activo (sin fecha de devolución)
+     */
+    public Optional<Prestamo> obtenerPrestamoPorCodigoUnico(String codigoUnico) {
+        return prestamoRepository.findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoUnico);
     }
 
-    // Método para actualizar un préstamo
+    /**
+     * Actualiza los datos de un préstamo existente
+     * Verifica que el préstamo exista antes de actualizarlo
+     */
     public Prestamo actualizarPrestamo(Integer idPrestamo, Prestamo prestamoActualizado) {
         if (!prestamoRepository.existsById(idPrestamo)) {
             throw new IllegalArgumentException("El préstamo con ID " + idPrestamo + " no existe.");
@@ -90,7 +141,10 @@ public Prestamo aceptarDevolucionPorCodigo(String codigo) {
         return prestamoRepository.save(prestamoActualizado);
     }
 
-    // Método para eliminar un préstamo
+    /**
+     * Elimina un préstamo del sistema por su ID
+     * Verifica que el préstamo exista antes de eliminarlo
+     */
     public void eliminarPrestamo(Integer idPrestamo) {
         if (!prestamoRepository.existsById(idPrestamo)) {
             throw new IllegalArgumentException("El préstamo con ID " + idPrestamo + " no existe.");
@@ -98,7 +152,10 @@ public Prestamo aceptarDevolucionPorCodigo(String codigo) {
         prestamoRepository.deleteById(idPrestamo);
     }
 
-    // Método para obtener préstamos por usuario
+    /**
+     * Obtiene todos los préstamos realizados por un usuario específico
+     * Útil para ver el historial de préstamos de un usuario
+     */
     public List<Prestamo> obtenerPrestamosPorUsuario(Integer idUsuario) {
         return prestamoRepository.findByUsuario_IdUsuario(idUsuario);
     }
