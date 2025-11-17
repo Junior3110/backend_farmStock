@@ -56,6 +56,9 @@ public class Herramienta_detalle {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate fechaIngreso;
 
+    @Column(name = "contador_prestamos")
+    private Integer contadorPrestamos = 0;
+
     public Herramienta_detalle() {}
 
     // getters / setters
@@ -71,4 +74,6 @@ public class Herramienta_detalle {
     public void setDisponible(Boolean disponible) { this.disponible = disponible; }
     public LocalDate getFechaIngreso() { return fechaIngreso; }
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
+    public Integer getContadorPrestamos() { return contadorPrestamos; }
+    public void setContadorPrestamos(Integer contadorPrestamos) { this.contadorPrestamos = contadorPrestamos; }
 }

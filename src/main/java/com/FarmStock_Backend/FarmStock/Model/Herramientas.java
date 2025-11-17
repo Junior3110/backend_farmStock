@@ -6,8 +6,15 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 
 @Entity
 @Table(name = "herramienta")
@@ -54,6 +61,10 @@ public class Herramientas {
     @JsonProperty("fecha_registro")
     private LocalDate fechaRegistro;
 
+    @Column(name = "contador_prestamos")
+    @JsonProperty("contador_prestamos")
+    private Integer contadorPrestamos = 0;
+
     public Herramientas() {}
 
     // getters / setters
@@ -75,4 +86,6 @@ public class Herramientas {
     public void setCantidad(Integer cantidad) { this.cantidad = cantidad; }
     public LocalDate getFechaRegistro() { return fechaRegistro; }
     public void setFechaRegistro(LocalDate fechaRegistro) { this.fechaRegistro = fechaRegistro; }
+    public Integer getContadorPrestamos() { return contadorPrestamos; }
+    public void setContadorPrestamos(Integer contadorPrestamos) { this.contadorPrestamos = contadorPrestamos; }
 }

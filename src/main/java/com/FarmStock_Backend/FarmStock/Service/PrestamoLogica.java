@@ -14,6 +14,7 @@ import com.FarmStock_Backend.FarmStock.Model.Prestamo;
 import com.FarmStock_Backend.FarmStock.Model.Usuario;
 import com.FarmStock_Backend.FarmStock.Repository.AprendizRepository;
 import com.FarmStock_Backend.FarmStock.Repository.Herramienta_detalleRepository;
+import com.FarmStock_Backend.FarmStock.Repository.HerramientasRepository;
 import com.FarmStock_Backend.FarmStock.Repository.PrestamoRepository;
 import com.FarmStock_Backend.FarmStock.Repository.UsuarioRepository;
 
@@ -23,20 +24,23 @@ public class PrestamoLogica {
     private final PrestamoRepository prestamoRepository;
     private final Herramienta_detalleRepository herramientadetalleRepository;   
     private final UsuarioRepository usuarioRepository;
-    private final AprendizRepository aprendizRepository; 
+    private final AprendizRepository aprendizRepository;
+    private final HerramientasRepository herramientasRepository;
 
     @Autowired
-    public PrestamoLogica(PrestamoRepository prestamoRepository, Herramienta_detalleRepository herramientadetalleRepository, UsuarioRepository usuarioRepository, AprendizRepository aprendizRepository) {
+    public PrestamoLogica(PrestamoRepository prestamoRepository, Herramienta_detalleRepository herramientadetalleRepository, UsuarioRepository usuarioRepository, AprendizRepository aprendizRepository, HerramientasRepository herramientasRepository) {
         this.prestamoRepository = prestamoRepository;
         this.herramientadetalleRepository = herramientadetalleRepository;
         this.usuarioRepository = usuarioRepository;
-        this.aprendizRepository = aprendizRepository; 
+        this.aprendizRepository = aprendizRepository;
+        this.herramientasRepository = herramientasRepository;
     }
 
     /**
      * Crea un nuevo préstamo de herramienta
      * Busca la herramienta por código único, el usuario por ID y el aprendiz por número de documento
      * Asocia todos estos datos al préstamo y lo guarda en la base de datos
+     * Incrementa el contador de préstamos de la herramienta general Y del detalle individual
      */
     public Prestamo crearPrestamo(String codigo, Integer idUsuario, String numeroDocumento, Prestamo prestamo) {
         Herramienta_detalle herramientaDetalle = herramientadetalleRepository.findByCodigoUnico(codigo)
@@ -51,6 +55,16 @@ public class PrestamoLogica {
         prestamo.setHerramienta(herramienta);
         prestamo.setUsuario(usuario);
         prestamo.setAprendiz(aprendiz); 
+
+        // Incrementar contador de préstamos en la herramienta general (para estadísticas agregadas)
+        Integer contadorGeneral = herramienta.getContadorPrestamos();
+        herramienta.setContadorPrestamos(contadorGeneral != null ? contadorGeneral + 1 : 1);
+        herramientasRepository.save(herramienta);
+
+        // Incrementar contador de préstamos en el detalle individual (para rastrear unidades específicas)
+        Integer contadorDetalle = herramientaDetalle.getContadorPrestamos();
+        herramientaDetalle.setContadorPrestamos(contadorDetalle != null ? contadorDetalle + 1 : 1);
+        herramientadetalleRepository.save(herramientaDetalle);
 
         return prestamoRepository.save(prestamo);
     }

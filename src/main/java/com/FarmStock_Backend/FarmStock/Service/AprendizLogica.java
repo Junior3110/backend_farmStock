@@ -36,13 +36,6 @@ public class AprendizLogica {
         return aprendizRepository.findAll();
     }
 
-    /**
-     * Busca un aprendiz por ID o lanza error si no existe.
-     */
-    public Aprendiz buscarAprendiz(Integer idAprendiz) {
-        return aprendizRepository.findById(idAprendiz)
-            .orElseThrow(() -> new IllegalArgumentException("No se encontró el aprendiz con id: " + idAprendiz));
-    }
 
     /**
      * Busca un aprendiz por tipo y número de documento.
@@ -53,6 +46,17 @@ public class AprendizLogica {
                 "No se encontró un aprendiz con documento: " + tipoDocumento + " " + numeroDocumento
             ));
     }
+
+    /**
+     * Buscar aprendiz por numero Ficha
+     */
+    public Aprendiz buscarPorNumeroFicha( String numeroFicha) {
+        return aprendizRepository.findByNumeroFicha(numeroFicha)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "No se encontró a ningun aprendiz con este numero de ficha: " + numeroFicha));
+    }
+
+    
 
     /**
      * Actualiza los datos básicos del aprendiz indicado por ID.

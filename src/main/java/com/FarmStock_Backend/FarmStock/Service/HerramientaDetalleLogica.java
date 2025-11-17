@@ -49,9 +49,20 @@ public class HerramientaDetalleLogica {
         }
     }
 
+    // 🔍 Obtener todos los detalles de herramientas
+    public List<Herramienta_detalle> obtenerTodos() {
+        return herramientaDetalleRepository.findAll();
+    }
+
     // 🔍 Obtener herramientas por ID
     public List<Herramienta_detalle> obtenerHerramientas(Integer id) {
         return herramientaDetalleRepository.findByHerramienta_IdHerramienta(id);
+    }
+
+    // 🔍 Obtener detalle por código único
+    public Herramienta_detalle obtenerPorCodigoUnico(String codigoUnico) {
+        return herramientaDetalleRepository.findByCodigoUnico(codigoUnico)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró herramienta con código: " + codigoUnico));
     }
 
     // 🛠️ Crear herramienta y generar códigos
