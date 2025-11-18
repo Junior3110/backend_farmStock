@@ -4,17 +4,21 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.FarmStock_Backend.FarmStock.Model.Aprendiz;
 import com.FarmStock_Backend.FarmStock.Repository.AprendizRepository;
+import com.FarmStock_Backend.FarmStock.Repository.PrestamoRepository;
 
 @Service
 public class AprendizLogica {
 
     private final AprendizRepository aprendizRepository;
+    private final PrestamoRepository prestamoRepository;
 
-    public AprendizLogica(AprendizRepository aprendizRepository) {
+    public AprendizLogica(AprendizRepository aprendizRepository, PrestamoRepository prestamoRepository) {
         this.aprendizRepository = aprendizRepository;
+        this.prestamoRepository = prestamoRepository;
     }
 
     /**
@@ -36,7 +40,6 @@ public class AprendizLogica {
         return aprendizRepository.findAll();
     }
 
-
     /**
      * Busca un aprendiz por tipo y número de documento.
      */
@@ -50,13 +53,11 @@ public class AprendizLogica {
     /**
      * Buscar aprendiz por numero Ficha
      */
-    public Aprendiz buscarPorNumeroFicha( String numeroFicha) {
+    public Aprendiz buscarPorNumeroFicha(String numeroFicha) {
         return aprendizRepository.findByNumeroFicha(numeroFicha)
             .orElseThrow(() -> new IllegalArgumentException(
                 "No se encontró a ningun aprendiz con este numero de ficha: " + numeroFicha));
     }
-
-    
 
     /**
      * Actualiza los datos básicos del aprendiz indicado por ID.
@@ -76,10 +77,14 @@ public class AprendizLogica {
     }
 
     /**
-     * Elimina un aprendiz por ID.
+     * Elimina un aprendiz por ID (y sus préstamos asociados) en una transacción.
      */
+    @Transactional
     public void eliminarAprendiz(Integer idAprendiz) {
         if (aprendizRepository.existsById(idAprendiz)) {
+            // Elimina todos los préstamos asociados a este aprendiz
+            prestamoRepository.deleteByAprendizIdAprendiz(idAprendiz);
+            // Luego elimina el aprendiz
             aprendizRepository.deleteById(idAprendiz);
         } else {
             throw new IllegalArgumentException("No se encontró el aprendiz con id: " + idAprendiz);

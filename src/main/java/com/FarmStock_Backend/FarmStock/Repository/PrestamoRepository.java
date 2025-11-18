@@ -17,4 +17,6 @@ public interface PrestamoRepository extends JpaRepository<Prestamo, Integer> {
     Optional<Prestamo> findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(String codigoUnico);
 
     List<Prestamo> findByEstado(String estado);
+    
+    void deleteByAprendizIdAprendiz(Integer idAprendiz);
 }
