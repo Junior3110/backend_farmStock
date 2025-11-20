@@ -59,6 +59,9 @@ public class Herramienta_detalle {
     @Column(name = "contador_prestamos")
     private Integer contadorPrestamos = 0;
 
+    @Column(name = "comentario", columnDefinition = "TEXT")
+    private String comentario;
+
     public Herramienta_detalle() {}
 
     // getters / setters
@@ -76,4 +79,6 @@ public class Herramienta_detalle {
     public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
     public Integer getContadorPrestamos() { return contadorPrestamos; }
     public void setContadorPrestamos(Integer contadorPrestamos) { this.contadorPrestamos = contadorPrestamos; }
+    public String getComentario() { return comentario; }
+    public void setComentario(String comentario) { this.comentario = comentario; }
 }

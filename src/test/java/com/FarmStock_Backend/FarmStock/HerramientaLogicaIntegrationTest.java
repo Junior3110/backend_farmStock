@@ -50,7 +50,7 @@ public class HerramientaLogicaIntegrationTest {
         // Assert
         assertNotNull(guardada.getIdHerramienta());
         List<Herramienta_detalle> detalles = herramientaDetalleRepository
-                .findByHerramienta_IdHerramienta(guardada.getIdHerramienta());
+                .findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(guardada.getIdHerramienta());
 
         assertEquals(3, detalles.size(), "Debe crear tres detalles para la herramienta");
 
@@ -77,7 +77,7 @@ public class HerramientaLogicaIntegrationTest {
         h.setCantidad(4);
         herramientaLogica.actualizarHerramienta(guardada.getIdHerramienta(), h);
         List<Herramienta_detalle> detallesAumentados = herramientaDetalleRepository
-                .findByHerramienta_IdHerramienta(guardada.getIdHerramienta());
+                .findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(guardada.getIdHerramienta());
 
         // Assert 1
         assertEquals(4, detallesAumentados.size(), "Debe aumentar a cuatro detalles");
@@ -86,7 +86,7 @@ public class HerramientaLogicaIntegrationTest {
         h.setCantidad(2);
         herramientaLogica.actualizarHerramienta(guardada.getIdHerramienta(), h);
         List<Herramienta_detalle> detallesReducidos = herramientaDetalleRepository
-                .findByHerramienta_IdHerramienta(guardada.getIdHerramienta());
+                .findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(guardada.getIdHerramienta());
 
         // Assert 2
         assertEquals(2, detallesReducidos.size(), "Debe eliminar dos detalles");
@@ -114,7 +114,7 @@ public class HerramientaLogicaIntegrationTest {
         assertFalse(herramientasRepository.findById(guardada.getIdHerramienta()).isPresent(),
                 "La herramienta principal debe eliminarse");
         List<Herramienta_detalle> detalles = herramientaDetalleRepository
-                .findByHerramienta_IdHerramienta(guardada.getIdHerramienta());
+                .findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(guardada.getIdHerramienta());
         assertTrue(detalles.isEmpty(), "Los detalles también deben eliminarse");
     }
 }

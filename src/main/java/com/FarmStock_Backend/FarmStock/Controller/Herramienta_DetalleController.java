@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -62,5 +63,19 @@ public class Herramienta_DetalleController {
             @PathVariable Integer idDetalle,
             @RequestBody Herramienta_detalle detalleActualizado) {
         return herramientaDetalleLogica.actualizarHerramientaDetalle(idDetalle, detalleActualizado);
+    }
+
+    /**
+     * DELETE /api/herramienta-detalle/{idDetalle}
+     * Elimina una unidad física específica y actualiza la cantidad en la herramienta general
+     */
+    @DeleteMapping("/{idDetalle}")
+    public ResponseEntity<?> eliminarDetalle(@PathVariable Integer idDetalle) {
+        try {
+            herramientaDetalleLogica.eliminarHerramientaDetalle(idDetalle);
+            return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 }

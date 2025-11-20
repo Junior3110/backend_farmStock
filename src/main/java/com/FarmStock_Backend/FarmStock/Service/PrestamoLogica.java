@@ -43,8 +43,11 @@ public class PrestamoLogica {
      * Incrementa el contador de préstamos de la herramienta general Y del detalle individual
      */
     public Prestamo crearPrestamo(String codigo, Integer idUsuario, String numeroDocumento, Prestamo prestamo) {
-        Herramienta_detalle herramientaDetalle = herramientadetalleRepository.findByCodigoUnico(codigo)
-            .orElseThrow(() -> new RuntimeException("no se encontro ninguna herramienta con este codigo: " + codigo));
+        // Normalizar el código: reemplazar barras (/) por guiones (-) para coincidir con el formato de la BD
+        String codigoNormalizado = codigo.replace("/", "-");
+        
+        Herramienta_detalle herramientaDetalle = herramientadetalleRepository.findByCodigoUnico(codigoNormalizado)
+            .orElseThrow(() -> new RuntimeException("no se encontro ninguna herramienta con este codigo: " + codigoNormalizado));
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new RuntimeException("no se encontro usuario con este id: " + idUsuario));
         Herramientas herramienta = herramientaDetalle.getHerramienta();
@@ -76,9 +79,12 @@ public class PrestamoLogica {
      */
     public Prestamo aceptarDevolucionPorCodigo(String codigo) {
         try {
+            // Normalizar el código: reemplazar barras (/) por guiones (-)
+            String codigoNormalizado = codigo.replace("/", "-");
+            
             Prestamo prestamo = prestamoRepository
-                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigo)
-                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigo));
+                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoNormalizado)
+                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigoNormalizado));
 
             prestamo.setFechaDevolucion(LocalDateTime.now());
             prestamo.setEstado("Finalizado");
@@ -97,9 +103,12 @@ public class PrestamoLogica {
      * Verifica que el préstamo exista, no tenga fecha de devolución y esté en estado "Activo"
      */
     public Prestamo obtenerPrestamoActivo(String codigo) {
+        // Normalizar el código: reemplazar barras (/) por guiones (-)
+        String codigoNormalizado = codigo.replace("/", "-");
+        
         Prestamo prestamo = prestamoRepository
-                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigo)
-                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigo));
+                .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoNormalizado)
+                .orElseThrow(() -> new RuntimeException("No hay préstamo activo para ese código: " + codigoNormalizado));
         
         if (!prestamo.getEstado().equals("Activo")) {
             throw new RuntimeException("La herramienta ya se devolvió o no está en préstamo activo");
@@ -140,7 +149,9 @@ public class PrestamoLogica {
      * Solo retorna el préstamo si está activo (sin fecha de devolución)
      */
     public Optional<Prestamo> obtenerPrestamoPorCodigoUnico(String codigoUnico) {
-        return prestamoRepository.findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoUnico);
+        // Normalizar el código: reemplazar barras (/) por guiones (-)
+        String codigoNormalizado = codigoUnico.replace("/", "-");
+        return prestamoRepository.findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoNormalizado);
     }
 
     /**

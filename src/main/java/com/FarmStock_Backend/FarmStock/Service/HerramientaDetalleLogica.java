@@ -41,7 +41,9 @@ public class HerramientaDetalleLogica {
 
             detalleExistente.setEstado(detalleActualizado.getEstado());
             detalleExistente.setDisponible(detalleActualizado.getDisponible());
-            detalleExistente.setFechaIngreso(detalleActualizado.getFechaIngreso());
+            detalleExistente.getFechaIngreso();
+            detalleExistente.setComentario(detalleActualizado.getComentario());
+            
 
             return herramientaDetalleRepository.save(detalleExistente);
         } else {
@@ -56,13 +58,43 @@ public class HerramientaDetalleLogica {
 
     // 🔍 Obtener herramientas por ID
     public List<Herramienta_detalle> obtenerHerramientas(Integer id) {
-        return herramientaDetalleRepository.findByHerramienta_IdHerramienta(id);
+        return herramientaDetalleRepository.findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(id);
     }
 
     // 🔍 Obtener detalle por código único
     public Herramienta_detalle obtenerPorCodigoUnico(String codigoUnico) {
         return herramientaDetalleRepository.findByCodigoUnico(codigoUnico)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró herramienta con código: " + codigoUnico));
+    }
+
+    // 🗑️ Eliminar una unidad física específica (herramienta_detalle)
+    public void eliminarHerramientaDetalle(Integer idDetalle) {
+        Optional<Herramienta_detalle> detalleOpt = herramientaDetalleRepository.findById(idDetalle);
+        
+        if (!detalleOpt.isPresent()) {
+            throw new IllegalArgumentException("No se encontró la herramienta detalle con id: " + idDetalle);
+        }
+        
+        Herramienta_detalle detalle = detalleOpt.get();
+        Herramientas herramienta = detalle.getHerramienta();
+        
+        try {
+            // Intentar eliminar el detalle
+            herramientaDetalleRepository.deleteById(idDetalle);
+            
+            // Si se eliminó exitosamente, actualizar la cantidad en la herramienta general
+            int cantidadActual = herramienta.getCantidad() != null ? herramienta.getCantidad() : 0;
+            if (cantidadActual > 0) {
+                herramienta.setCantidad(cantidadActual - 1);
+                herramientasRepository.save(herramienta);
+            }
+        } catch (Exception e) {
+            // Si falla por restricción de clave foránea (tiene préstamos/mantenimientos)
+            throw new IllegalArgumentException(
+                "No se puede eliminar esta herramienta porque tiene historial de préstamos o mantenimientos asociados. " +
+                "Solo se pueden eliminar herramientas sin historial."
+            );
+        }
     }
 
     // 🛠️ Crear herramienta y generar códigos

@@ -80,8 +80,9 @@ public class HerramientaLogica {
 
     /**
      * Actualiza datos de la herramienta y sincroniza la cantidad con sus detalles:
-     * - Si aumenta la cantidad, crea nuevos detalles y códigos.
-     * - Si disminuye, elimina detalles sobrantes (del final de la lista).
+     * - Solo permite AUMENTAR la cantidad, no disminuirla (para preservar historial).
+     * - Si aumenta la cantidad, crea nuevos detalles con códigos QR/barras.
+     * - Si se intenta disminuir, lanza excepción.
      */
     public Herramientas actualizarHerramienta(Integer id, Herramientas herramienta) {
         Optional<Herramientas> opt = herramientasRepository.findById(id);
@@ -99,36 +100,64 @@ public class HerramientaLogica {
         existente.setFechaRegistro(herramienta.getFechaRegistro());
         int oldCantidad = existente.getCantidad() != null ? existente.getCantidad() : 0;
         int newCantidad = herramienta.getCantidad() != null ? herramienta.getCantidad() : 0;
+        
+        // Validar que solo se pueda aumentar la cantidad
+        if (newCantidad < oldCantidad) {
+            throw new IllegalArgumentException("No se puede disminuir la cantidad de herramientas. Cantidad actual: " + oldCantidad);
+        }
+        
         existente.setCantidad(newCantidad);
 
         Herramientas guardada = herramientasRepository.save(existente);
 
+        // Solo crear nuevas unidades si aumentó la cantidad
         if (newCantidad > oldCantidad) {
-            for (int i = oldCantidad + 1; i <= newCantidad; i++) {
-                Herramienta_detalle detalle = new Herramienta_detalle();
-                detalle.setHerramienta(guardada);
-                String codigo = guardada.getNombre().toUpperCase() + "-" 
-                   + guardada.getIdHerramienta() + "-" 
-                   + String.format("%03d", i);
-                detalle.setCodigoUnico(codigo);
-                detalle.setEstado("Disponible");
-                detalle.setDisponible(true);
-                detalle.setFechaIngreso(guardada.getFechaRegistro());
-                herramientaDetalleRepository.save(detalle);
-            }
-        } else if (newCantidad < oldCantidad) {
-            List<Herramienta_detalle> detalles = herramientaDetalleRepository.findByHerramienta_IdHerramienta(guardada.getIdHerramienta());
-            int toRemove = oldCantidad - newCantidad;
-            for (int i = 0; i < toRemove && !detalles.isEmpty(); i++) {
-                Herramienta_detalle d = detalles.get(detalles.size() - 1 - i);
-                herramientaDetalleRepository.delete(d);
+            // Obtener los detalles existentes
+            List<Herramienta_detalle> detallesExistentes = herramientaDetalleRepository
+                .findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(guardada.getIdHerramienta());
+            
+            // Obtener los números de secuencia que ya existen
+            List<Integer> numerosExistentes = detallesExistentes.stream()
+                .map(d -> {
+                    String codigo = d.getCodigoUnico();
+                    String[] partes = codigo.split("-");
+                    return Integer.parseInt(partes[partes.length - 1]);
+                })
+                .sorted()
+                .toList();
+            
+            // Calcular cuántas unidades necesitamos crear
+            int unidadesACrear = newCantidad - detallesExistentes.size();
+            int numeroActual = 1;
+            int creadas = 0;
+            
+            // Crear las nuevas unidades rellenando huecos primero
+            while (creadas < unidadesACrear) {
+                // Si este número no existe, crear la unidad
+                if (!numerosExistentes.contains(numeroActual)) {
+                    Herramienta_detalle detalle = new Herramienta_detalle();
+                    detalle.setHerramienta(guardada);
+                    String codigo = guardada.getNombre().toUpperCase() + "-" 
+                       + guardada.getIdHerramienta() + "-" 
+                       + String.format("%03d", numeroActual);
+                    detalle.setCodigoUnico(codigo);
+                    detalle.setEstado("Disponible");
+                    detalle.setDisponible(true);
+                    detalle.setFechaIngreso(guardada.getFechaRegistro());
+                    herramientaDetalleRepository.save(detalle);
+                    
+                    // Generar QR y código de barras
+                    HerramientaDetalleLogica.generarCodigoQR(codigo, "qr_" + codigo + ".png");
+                    HerramientaDetalleLogica.generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
+                    
+                    creadas++;
+                }
+                numeroActual++;
             }
         }
 
         return guardada;
-    }
-
-    /**
+    }    /**
      * Elimina una herramienta y sus detalles asociados.
      * - Primero borra los detalles para evitar referencias huérfanas.
      */
@@ -137,7 +166,7 @@ public class HerramientaLogica {
         if (!opt.isPresent()) {
             throw new IllegalArgumentException("No se encontró la herramienta con id: " + id);
         }
-        List<Herramienta_detalle> detalles = herramientaDetalleRepository.findByHerramienta_IdHerramienta(id);
+        List<Herramienta_detalle> detalles = herramientaDetalleRepository.findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(id);
         if (detalles != null && !detalles.isEmpty()) {
             herramientaDetalleRepository.deleteAll(detalles);
         }
