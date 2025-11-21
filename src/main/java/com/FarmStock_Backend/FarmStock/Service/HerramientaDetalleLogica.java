@@ -32,7 +32,7 @@ public class HerramientaDetalleLogica {
         this.herramientasRepository = herramientasRepository;
     }
 
-    // 🔧 Actualizar herramienta detalle
+    //  Actualizar herramienta detalle
     public Herramienta_detalle actualizarHerramientaDetalle(Integer id, Herramienta_detalle detalleActualizado) {
         Optional<Herramienta_detalle> detalleOptional = herramientaDetalleRepository.findById(id);
 
@@ -51,23 +51,23 @@ public class HerramientaDetalleLogica {
         }
     }
 
-    // 🔍 Obtener todos los detalles de herramientas
+    //  Obtener todos los detalles de herramientas
     public List<Herramienta_detalle> obtenerTodos() {
         return herramientaDetalleRepository.findAll();
     }
 
-    // 🔍 Obtener herramientas por ID
+    //  Obtener herramientas por ID
     public List<Herramienta_detalle> obtenerHerramientas(Integer id) {
         return herramientaDetalleRepository.findByHerramienta_IdHerramientaOrderByCodigoUnicoAsc(id);
     }
 
-    // 🔍 Obtener detalle por código único
+    //  Obtener detalle por código único
     public Herramienta_detalle obtenerPorCodigoUnico(String codigoUnico) {
         return herramientaDetalleRepository.findByCodigoUnico(codigoUnico)
                 .orElseThrow(() -> new IllegalArgumentException("No se encontró herramienta con código: " + codigoUnico));
     }
 
-    // 🗑️ Eliminar una unidad física específica (herramienta_detalle)
+    //  Eliminar una unidad física específica (herramienta_detalle)
     public void eliminarHerramientaDetalle(Integer idDetalle) {
         Optional<Herramienta_detalle> detalleOpt = herramientaDetalleRepository.findById(idDetalle);
         

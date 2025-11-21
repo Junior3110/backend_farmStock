@@ -31,19 +31,19 @@ public class MantenimientoController {
     }
 
     /**
-     * POST /mantenimientos?idDetalle=X&idUsuario=Y
+     * POST /mantenimientos?codigoUnico=X&numeroDocumento=Y
      * Registra un nuevo mantenimiento o daño para una unidad física específica.
-     * Query params: idDetalle (requerido - unidad física), idUsuario (requerido)
+     * Query params: codigoUnico (código de herramienta), numeroDocumento (documento del usuario)
      * Body: { "tipo": "MANTENIMIENTO" o "DAÑO", "descripcion": "...", "estado": "PENDIENTE" }
      */
     @PostMapping
     public ResponseEntity<?> registrarMantenimiento(
-            @RequestParam Integer idDetalle,
-            @RequestParam Integer idUsuario,
+            @RequestParam String codigoUnico,
+            @RequestParam String numeroDocumento,
             @RequestBody Mantenimiento mantenimiento) {
         try {
             Mantenimiento creado = mantenimientoLogica.registrarMantenimiento(
-                idDetalle, idUsuario, mantenimiento);
+                codigoUnico, numeroDocumento, mantenimiento);
             return ResponseEntity.status(HttpStatus.CREATED).body(creado);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

@@ -33,19 +33,21 @@ public class MantenimientoLogica {
 
     /**
      * Registra un nuevo mantenimiento o daño para una unidad física específica.
-     * El idHerramienta se obtiene automáticamente desde el detalle.
+     * Busca por código único de herramienta y número de documento del usuario.
+     * Cambia automáticamente el estado de la herramienta_detalle a "Mantenimiento" y disponible=false.
      */
-    public Mantenimiento registrarMantenimiento(Integer idDetalle, Integer idUsuario, 
+    public Mantenimiento registrarMantenimiento(String codigoUnico, String numeroDocumento, 
                                                  Mantenimiento mantenimiento) {
-        // Buscar la unidad física específica
-        Herramienta_detalle detalle = herramientaDetalleRepository.findById(idDetalle)
-            .orElseThrow(() -> new IllegalArgumentException("No se encontró la unidad física con id: " + idDetalle));
+        // Buscar la unidad física específica por código único
+        Herramienta_detalle detalle = herramientaDetalleRepository.findByCodigoUnico(codigoUnico)
+            .orElseThrow(() -> new IllegalArgumentException("No se encontró la herramienta con código: " + codigoUnico));
 
         // Obtener la herramienta general desde el detalle
         Herramientas herramienta = detalle.getHerramienta();
         
-        Usuario usuario = usuarioRepository.findById(idUsuario)
-            .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario con id: " + idUsuario));
+        // Buscar usuario por número de documento
+        Usuario usuario = usuarioRepository.findByNumeroDocumento(numeroDocumento)
+            .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario con documento: " + numeroDocumento));
 
         mantenimiento.setHerramienta(herramienta);
         mantenimiento.setHerramientaDetalle(detalle);
@@ -55,6 +57,11 @@ public class MantenimientoLogica {
         if (mantenimiento.getFechaMantenimiento() == null) {
             mantenimiento.setFechaMantenimiento(java.time.LocalDate.now());
         }
+
+        // Cambiar estado de la herramienta_detalle a Mantenimiento
+        detalle.setEstado("Mantenimiento");
+        detalle.setDisponible(false);
+        herramientaDetalleRepository.save(detalle);
 
         return mantenimientoRepository.save(mantenimiento);
     }
@@ -112,6 +119,7 @@ public class MantenimientoLogica {
     /**
      * Actualiza un registro de mantenimiento/daño existente.
      * Solo actualiza campos editables: tipo, descripcion, estado.
+     * Si el estado cambia a COMPLETADO, vuelve la herramienta a Disponible.
      */
     public Mantenimiento actualizarMantenimiento(Integer id, Mantenimiento mantenimiento) {
         Mantenimiento existente = mantenimientoRepository.findById(id)
@@ -126,6 +134,16 @@ public class MantenimientoLogica {
         }
         if (mantenimiento.getEstado() != null) {
             existente.setEstado(mantenimiento.getEstado());
+            
+            // Si el mantenimiento se completó, volver la herramienta a disponible
+            if ("COMPLETADO".equals(mantenimiento.getEstado())) {
+                Herramienta_detalle detalle = existente.getHerramientaDetalle();
+                if (detalle != null) {
+                    detalle.setEstado("Disponible");
+                    detalle.setDisponible(true);
+                    herramientaDetalleRepository.save(detalle);
+                }
+            }
         }
 
         return mantenimientoRepository.save(existente);
