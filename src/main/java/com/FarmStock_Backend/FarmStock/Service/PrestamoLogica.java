@@ -128,6 +128,17 @@ public class PrestamoLogica {
                 .toList();
     }
 
+    /**
+     * Lista todos los préstamos ya devueltos (finalizados)
+     * Filtra los préstamos que tienen fecha de devolución registrada
+     * Usado para mostrar el historial de devoluciones
+     */
+    public List<Prestamo> obtenerTodosLosPrestamosDevueltos() {
+        return prestamoRepository.findAll().stream()
+                .filter(p -> p.getFechaDevolucion() != null)
+                .toList();
+    }
+
 
 
 

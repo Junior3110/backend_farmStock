@@ -78,6 +78,16 @@ public class PrestamoController {
     }
 
     /**
+     * GET /prestamos/devueltos
+     * Lista solo los préstamos ya devueltos (finalizados)
+     * Usado para mostrar el historial de devoluciones
+     */
+    @GetMapping("/devueltos")
+    public ResponseEntity<List<Prestamo>> listarPrestamosDevueltos() {
+        return ResponseEntity.ok(prestamoLogica.obtenerTodosLosPrestamosDevueltos());
+    }
+
+    /**
      * GET /prestamos/activo/codigo/{codigoUnico}
      * Busca un préstamo activo específico por código de herramienta
      * Retorna error si no hay préstamo activo con ese código
