@@ -74,6 +74,16 @@ public class MantenimientoLogica {
     }
 
     /**
+     * Obtiene todos los mantenimientos activos (no completados).
+     * Filtra por estado diferente de COMPLETADO.
+     */
+    public List<Mantenimiento> obtenerMantenimientosActivos() {
+        return mantenimientoRepository.findAll().stream()
+                .filter(m -> !"COMPLETADO".equals(m.getEstado()))
+                .toList();
+    }
+
+    /**
      * Obtiene un mantenimiento/daño por ID.
      */
     public Mantenimiento obtenerPorId(Integer id) {
