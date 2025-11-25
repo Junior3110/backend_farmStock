@@ -119,9 +119,8 @@ public class HerramientaDetalleLogica {
             // Guardar el detalle
             herramientaDetalleRepository.save(detalle);
 
-            // Generar QR y código de barras automáticamente
+            // Generar QR automáticamente
             generarCodigoQR(codigo, "qr_" + codigo + ".png");
-            generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
         }
 
         return saved;
@@ -145,29 +144,6 @@ public class HerramientaDetalleLogica {
             ImageIO.write(image, "png", outputFile);
 
             System.out.println("✅ Código QR generado: " + outputFile.getAbsolutePath());
-        } catch (WriterException | IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 🧾 Generar código de barras
-    public static void generarCodigoDeBarras(String texto, String nombreArchivo) {
-        try {
-            int width = 400;
-            int height = 150;
-
-            BitMatrix matrix = new MultiFormatWriter().encode(texto, BarcodeFormat.CODE_128, width, height);
-            BufferedImage image = MatrixToImageWriter.toBufferedImage(matrix);
-
-            File directorio = new File("codigos_barras");
-            if (!directorio.exists()) {
-                directorio.mkdirs();
-            }
-
-            File outputFile = new File(directorio, nombreArchivo);
-            ImageIO.write(image, "png", outputFile);
-
-            System.out.println("✅ Código de barras generado: " + outputFile.getAbsolutePath());
         } catch (WriterException | IOException e) {
             e.printStackTrace();
         }

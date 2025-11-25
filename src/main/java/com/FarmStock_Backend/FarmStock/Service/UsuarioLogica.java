@@ -53,14 +53,30 @@ public class UsuarioLogica {
     }
 
     /**
+     * Busca un usuario por su número de documento.
+     */
+    public Usuario buscarPorNumeroDocumento(String numeroDocumento){
+        return usuarioRepository.findByNumeroDocumento(numeroDocumento)
+                .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario con documento: " + numeroDocumento));
+    }
+
+    /**
      * Actualiza los datos del usuario indicado por ID.
-     * Copia los campos permitidos del DTO recibido y guarda los cambios.
+     * Valida que el correo no esté siendo usado por otro usuario.
      */
     public Usuario actualizarUsuario(Integer id, Usuario usuario){
         Optional<Usuario> usuOptional = usuarioRepository.findById(id);
 
         if(usuOptional.isPresent()){
             Usuario usuario1 = usuOptional.get();
+
+            // Validar que el correo no esté siendo usado por otro usuario
+            if (usuario.getCorreo() != null && !usuario.getCorreo().equals(usuario1.getCorreo())) {
+                Optional<Usuario> usuarioConCorreo = usuarioRepository.findByCorreo(usuario.getCorreo());
+                if (usuarioConCorreo.isPresent() && !usuarioConCorreo.get().getIdUsuario().equals(id)) {
+                    throw new IllegalArgumentException("El correo ya está siendo usado por otro usuario");
+                }
+            }
 
             usuario1.setNombres(usuario.getNombres());
             usuario1.setApellidos(usuario.getApellidos());

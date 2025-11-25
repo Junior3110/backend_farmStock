@@ -47,9 +47,8 @@ public class HerramientaLogica {
                 detalle.setFechaIngreso(herramientaGuardada.getFechaRegistro());
                 herramientaDetalleRepository.save(detalle);
 
-                // 👇 Llamas los métodos desde HerramientaDetalleLogica
+                // Generar QR automáticamente
                 HerramientaDetalleLogica.generarCodigoQR(codigo, "qr_" + codigo + ".png");
-                HerramientaDetalleLogica.generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
             }
 
             return herramientaGuardada;
@@ -146,9 +145,8 @@ public class HerramientaLogica {
                     detalle.setFechaIngreso(guardada.getFechaRegistro());
                     herramientaDetalleRepository.save(detalle);
                     
-                    // Generar QR y código de barras
+                    // Generar QR
                     HerramientaDetalleLogica.generarCodigoQR(codigo, "qr_" + codigo + ".png");
-                    HerramientaDetalleLogica.generarCodigoDeBarras(codigo, "bar_" + codigo + ".png");
                     
                     creadas++;
                 }
