@@ -63,6 +63,7 @@ public class MantenimientoController {
      * GET /mantenimientos/activos
      * Lista solo los mantenimientos activos (estado != COMPLETADO).
      */
+    
     @GetMapping("/activos")
     public ResponseEntity<List<Mantenimiento>> listarMantenimientosActivos() {
         return ResponseEntity.ok(mantenimientoLogica.obtenerMantenimientosActivos());

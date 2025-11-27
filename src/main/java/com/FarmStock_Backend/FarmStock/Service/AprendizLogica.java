@@ -33,16 +33,16 @@ public class AprendizLogica {
         return aprendizRepository.save(aprendiz);
     }
 
-    /**
-     * Lista todos los aprendices.
-     */
+    
+     //Lista todos los aprendices.
+     
     public List<Aprendiz> verAprendices() {
         return aprendizRepository.findAll();
     }
 
-    /**
-     * Busca un aprendiz por tipo y número de documento.
-     */
+    
+    //Busca un aprendiz por tipo y número de documento.
+     
     public Aprendiz buscarPorDocumento(String tipoDocumento, String numeroDocumento) {
         return aprendizRepository.findByTipoDocumentoAndNumeroDocumento(tipoDocumento, numeroDocumento)
             .orElseThrow(() -> new IllegalArgumentException(
@@ -50,18 +50,18 @@ public class AprendizLogica {
             ));
     }
 
-    /**
-     * Buscar aprendiz por numero Ficha
-     */
+    
+    //Buscar aprendiz por numero Ficha
+    
     public Aprendiz buscarPorNumeroFicha(String numeroFicha) {
         return aprendizRepository.findByNumeroFicha(numeroFicha)
             .orElseThrow(() -> new IllegalArgumentException(
                 "No se encontró a ningun aprendiz con este numero de ficha: " + numeroFicha));
     }
 
-    /**
-     * Actualiza los datos básicos del aprendiz indicado por ID.
-     */
+    
+    //Actualiza los datos básicos del aprendiz indicado por ID.
+    
     public Aprendiz actualizarAprendiz(Integer idAprendiz, Aprendiz aprendiz) {
         Optional<Aprendiz> opt = aprendizRepository.findById(idAprendiz);
         if (opt.isPresent()) {
@@ -76,9 +76,9 @@ public class AprendizLogica {
         }
     }
 
-    /**
-     * Elimina un aprendiz por ID (y sus préstamos asociados) en una transacción.
-     */
+    
+    //Elimina un aprendiz por ID (y sus préstamos asociados) en una transacción.
+    
     @Transactional
     public void eliminarAprendiz(Integer idAprendiz) {
         if (aprendizRepository.existsById(idAprendiz)) {

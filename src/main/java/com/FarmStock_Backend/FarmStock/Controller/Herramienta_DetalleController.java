@@ -1,8 +1,12 @@
 package com.FarmStock_Backend.FarmStock.Controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -76,6 +80,28 @@ public class Herramienta_DetalleController {
             return ResponseEntity.noContent().build();
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * GET /api/herramienta-detalle/qr/{codigoUnico}
+     * Obtiene la imagen QR de una herramienta para imprimir
+     * Retorna la imagen PNG directamente
+     */
+    @GetMapping("/qr/{codigoUnico}")
+    public ResponseEntity<?> obtenerCodigoQR(@PathVariable String codigoUnico) {
+        try {
+            File archivoQR = herramientaDetalleLogica.obtenerImagenQR(codigoUnico);
+            byte[] imagenBytes = Files.readAllBytes(archivoQR.toPath());
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG)
+                    .body(imagenBytes);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error al leer el archivo QR: " + e.getMessage());
         }
     }
 }

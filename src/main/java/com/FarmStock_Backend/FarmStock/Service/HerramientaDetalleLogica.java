@@ -148,4 +148,19 @@ public class HerramientaDetalleLogica {
             e.printStackTrace();
         }
     }
+
+    /**
+     * Obtiene el archivo de imagen QR para un código único específico.
+     * Retorna el archivo para que pueda ser enviado como respuesta HTTP.
+     */
+    public File obtenerImagenQR(String codigoUnico) {
+        String nombreArchivo = "qr_" + codigoUnico + ".png";
+        File archivoQR = new File("codigos_qr", nombreArchivo);
+        
+        if (!archivoQR.exists()) {
+            throw new IllegalArgumentException("No se encontró el código QR para: " + codigoUnico);
+        }
+        
+        return archivoQR;
+    }
 }
