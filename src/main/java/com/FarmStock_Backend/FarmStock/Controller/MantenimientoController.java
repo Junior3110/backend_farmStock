@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.FarmStock_Backend.FarmStock.DTO.EstadisticasHerramientaDTO;
 import com.FarmStock_Backend.FarmStock.Model.Mantenimiento;
 import com.FarmStock_Backend.FarmStock.Service.MantenimientoLogica;
 
@@ -135,6 +136,50 @@ public class MantenimientoController {
         try {
             mantenimientoLogica.eliminarMantenimiento(id);
             return ResponseEntity.noContent().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * GET /mantenimientos/estadisticas/{idHerramienta}
+     * Obtiene las estadísticas de daños y mantenimientos de una herramienta específica.
+     * Retorna: { idHerramienta, nombreHerramienta, totalDanos, totalMantenimientos }
+     */
+    @GetMapping("/estadisticas/{idHerramienta}")
+    public ResponseEntity<?> obtenerEstadisticasHerramienta(@PathVariable Integer idHerramienta) {
+        try {
+            EstadisticasHerramientaDTO estadisticas = 
+                mantenimientoLogica.obtenerEstadisticasHerramienta(idHerramienta);
+            return ResponseEntity.ok(estadisticas);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * GET /mantenimientos/estadisticas
+     * Obtiene las estadísticas de daños y mantenimientos de TODAS las herramientas.
+     * Retorna lista completa: [{ idHerramienta, nombreHerramienta, totalDanos, totalMantenimientos }, ...]
+     */
+    @GetMapping("/estadisticas")
+    public ResponseEntity<List<EstadisticasHerramientaDTO>> obtenerEstadisticasTodasLasHerramientas() {
+        List<EstadisticasHerramientaDTO> estadisticas = 
+            mantenimientoLogica.obtenerEstadisticasTodasLasHerramientas();
+        return ResponseEntity.ok(estadisticas);
+    }
+
+    /**
+     * GET /mantenimientos/estadisticas/codigo/{codigoUnico}
+     * Obtiene las estadísticas de una unidad física específica por código único.
+     * Ejemplo: /mantenimientos/estadisticas/codigo/MARTILLO-1-001
+     */
+    @GetMapping("/estadisticas/codigo/{codigoUnico}")
+    public ResponseEntity<?> obtenerEstadisticasPorCodigoUnico(@PathVariable String codigoUnico) {
+        try {
+            EstadisticasHerramientaDTO estadisticas = 
+                mantenimientoLogica.obtenerEstadisticasPorCodigoUnico(codigoUnico);
+            return ResponseEntity.ok(estadisticas);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }

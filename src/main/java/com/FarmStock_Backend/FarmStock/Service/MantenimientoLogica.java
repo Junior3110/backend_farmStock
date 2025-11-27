@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.FarmStock_Backend.FarmStock.DTO.EstadisticasHerramientaDTO;
 import com.FarmStock_Backend.FarmStock.Model.Herramienta_detalle;
 import com.FarmStock_Backend.FarmStock.Model.Herramientas;
 import com.FarmStock_Backend.FarmStock.Model.Mantenimiento;
@@ -167,5 +168,87 @@ public class MantenimientoLogica {
             throw new IllegalArgumentException("No se encontró el registro con id: " + id);
         }
         mantenimientoRepository.deleteById(id);
+    }
+
+    /**
+     * Obtiene las estadísticas completas de daños y mantenimientos de una herramienta.
+     * Método profesional que consulta de forma optimizada usando queries específicas.
+     * 
+     * @param idHerramienta ID de la herramienta a consultar
+     * @return DTO con totalDanos y totalMantenimientos
+     * @throws IllegalArgumentException si la herramienta no existe
+     */
+    public EstadisticasHerramientaDTO obtenerEstadisticasHerramienta(Integer idHerramienta) {
+        // Validar que la herramienta existe
+        Herramientas herramienta = herramientasRepository.findById(idHerramienta)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "No se encontró la herramienta con ID: " + idHerramienta));
+
+        // Obtener contadores usando queries optimizadas
+        Long totalDanos = mantenimientoRepository.contarDanosPorHerramienta(idHerramienta);
+        Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorHerramienta(idHerramienta);
+
+        // Construir y retornar el DTO
+        return new EstadisticasHerramientaDTO(
+            idHerramienta,
+            herramienta.getNombre(),
+            totalDanos,
+            totalMantenimientos
+        );
+    }
+
+    /**
+     * Obtiene las estadísticas de daños y mantenimientos de TODAS las herramientas.
+     * Genera un reporte completo iterando sobre todas las herramientas registradas.
+     * 
+     * @return Lista de DTOs con estadísticas de cada herramienta
+     */
+    public List<EstadisticasHerramientaDTO> obtenerEstadisticasTodasLasHerramientas() {
+        // Obtener todas las herramientas
+        List<Herramientas> todasLasHerramientas = herramientasRepository.findAll();
+
+        // Generar estadísticas para cada una
+        return todasLasHerramientas.stream()
+            .map(herramienta -> {
+                Integer idHerramienta = herramienta.getIdHerramienta();
+                Long totalDanos = mantenimientoRepository.contarDanosPorHerramienta(idHerramienta);
+                Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorHerramienta(idHerramienta);
+                
+                return new EstadisticasHerramientaDTO(
+                    idHerramienta,
+                    herramienta.getNombre(),
+                    totalDanos,
+                    totalMantenimientos
+                );
+            })
+            .toList();
+    }
+
+    /**
+     * Obtiene las estadísticas de daños y mantenimientos de una unidad física específica.
+     * Busca por código único (MARTILLO-1-001) en lugar de ID.
+     * 
+     * @param codigoUnico Código único de la herramienta_detalle
+     * @return DTO con estadísticas de esa unidad específica
+     * @throws IllegalArgumentException si no existe el código
+     */
+    public EstadisticasHerramientaDTO obtenerEstadisticasPorCodigoUnico(String codigoUnico) {
+        // Buscar la unidad física por código único
+        Herramienta_detalle detalle = herramientaDetalleRepository.findByCodigoUnico(codigoUnico)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "No se encontró herramienta con código: " + codigoUnico));
+
+        Herramientas herramienta = detalle.getHerramienta();
+
+        // Contar daños y mantenimientos de esta unidad específica
+        Long totalDanos = mantenimientoRepository.contarDanosPorCodigoUnico(codigoUnico);
+        Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorCodigoUnico(codigoUnico);
+
+        return new EstadisticasHerramientaDTO(
+            herramienta.getIdHerramienta(),
+            herramienta.getNombre() + " (" + codigoUnico + ")",
+            totalDanos,
+            totalMantenimientos
+        );
     }
 }

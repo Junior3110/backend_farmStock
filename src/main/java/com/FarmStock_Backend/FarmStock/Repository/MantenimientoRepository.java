@@ -33,4 +33,30 @@ public interface MantenimientoRepository extends JpaRepository<Mantenimiento, In
      * Obtiene todos los mantenimientos/daños realizados por un usuario específico.
      */
     List<Mantenimiento> findByUsuario_IdUsuario(Integer idUsuario);
+
+    /**
+     * Cuenta solo los daños de una herramienta específica.
+     * Optimizado con query específica para mejor rendimiento.
+     */
+    @Query("SELECT COUNT(m) FROM Mantenimiento m WHERE m.herramienta.idHerramienta = :idHerramienta AND m.tipo = 'DAÑO'")
+    Long contarDanosPorHerramienta(@Param("idHerramienta") Integer idHerramienta);
+
+    /**
+     * Cuenta solo los mantenimientos de una herramienta específica.
+     * Optimizado con query específica para mejor rendimiento.
+     */
+    @Query("SELECT COUNT(m) FROM Mantenimiento m WHERE m.herramienta.idHerramienta = :idHerramienta AND m.tipo = 'MANTENIMIENTO'")
+    Long contarMantenimientosPorHerramienta(@Param("idHerramienta") Integer idHerramienta);
+
+    /**
+     * Cuenta los daños de una unidad física específica por código único.
+     */
+    @Query("SELECT COUNT(m) FROM Mantenimiento m WHERE m.herramientaDetalle.codigoUnico = :codigoUnico AND m.tipo = 'DAÑO'")
+    Long contarDanosPorCodigoUnico(@Param("codigoUnico") String codigoUnico);
+
+    /**
+     * Cuenta los mantenimientos de una unidad física específica por código único.
+     */
+    @Query("SELECT COUNT(m) FROM Mantenimiento m WHERE m.herramientaDetalle.codigoUnico = :codigoUnico AND m.tipo = 'MANTENIMIENTO'")
+    Long contarMantenimientosPorCodigoUnico(@Param("codigoUnico") String codigoUnico);
 }
