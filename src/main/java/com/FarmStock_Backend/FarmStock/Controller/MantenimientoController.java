@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -124,6 +125,24 @@ public class MantenimientoController {
             return ResponseEntity.ok(actualizado);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    /**
+     * PATCH /mantenimientos/{id}/estado?estado=COMPLETADO
+     * Cambia solo el estado de un mantenimiento de forma rápida.
+     * Estados válidos: PENDIENTE, EN_PROCESO, COMPLETADO
+     * Cuando se marca COMPLETADO, la herramienta vuelve a estar disponible automáticamente.
+     */
+    @PatchMapping("/{id}/estado")
+    public ResponseEntity<?> cambiarEstadoMantenimiento(
+            @PathVariable Integer id,
+            @RequestParam String estado) {
+        try {
+            Mantenimiento actualizado = mantenimientoLogica.cambiarEstadoMantenimiento(id, estado);
+            return ResponseEntity.ok(actualizado);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

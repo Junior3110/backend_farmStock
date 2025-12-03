@@ -41,6 +41,7 @@ public class PrestamoLogica {
      * Busca la herramienta por código único, el usuario por ID y el aprendiz por número de documento
      * Asocia todos estos datos al préstamo y lo guarda en la base de datos
      * Incrementa el contador de préstamos de la herramienta general Y del detalle individual
+     * Valida que la herramienta no tenga un préstamo activo antes de crear uno nuevo
      */
     public Prestamo crearPrestamo(String codigo, Integer idUsuario, String numeroDocumento, Prestamo prestamo) {
         // Normalizar el código: reemplazar barras (/) por guiones (-) para coincidir con el formato de la BD
@@ -48,6 +49,17 @@ public class PrestamoLogica {
         
         Herramienta_detalle herramientaDetalle = herramientadetalleRepository.findByCodigoUnico(codigoNormalizado)
             .orElseThrow(() -> new RuntimeException("no se encontro ninguna herramienta con este codigo: " + codigoNormalizado));
+        
+        // ⚠️ VALIDACIÓN: Verificar que no tenga préstamo activo
+        Optional<Prestamo> prestamoActivo = prestamoRepository
+            .findByHerramientaDetalle_CodigoUnicoAndFechaDevolucionIsNull(codigoNormalizado);
+        
+        if (prestamoActivo.isPresent()) {
+            throw new RuntimeException(
+                "La herramienta " + codigoNormalizado + " ya tiene un préstamo activo. " +
+                "Debe ser devuelta antes de prestarla nuevamente.");
+        }
+        
         Usuario usuario = usuarioRepository.findById(idUsuario)
             .orElseThrow(() -> new RuntimeException("no se encontro usuario con este id: " + idUsuario));
         Herramientas herramienta = herramientaDetalle.getHerramienta();

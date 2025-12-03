@@ -8,6 +8,7 @@ public class EstadisticasHerramientaDTO {
 
     private Integer idHerramienta;
     private String nombreHerramienta;
+    private Long totalPrestamos;
     private Long totalDanos;
     private Long totalMantenimientos;
 
@@ -15,9 +16,10 @@ public class EstadisticasHerramientaDTO {
     }
 
     public EstadisticasHerramientaDTO(Integer idHerramienta, String nombreHerramienta, 
-                                      Long totalDanos, Long totalMantenimientos) {
+                                      Long totalPrestamos, Long totalDanos, Long totalMantenimientos) {
         this.idHerramienta = idHerramienta;
         this.nombreHerramienta = nombreHerramienta;
+        this.totalPrestamos = totalPrestamos;
         this.totalDanos = totalDanos;
         this.totalMantenimientos = totalMantenimientos;
     }
@@ -37,6 +39,14 @@ public class EstadisticasHerramientaDTO {
 
     public void setNombreHerramienta(String nombreHerramienta) {
         this.nombreHerramienta = nombreHerramienta;
+    }
+
+    public Long getTotalPrestamos() {
+        return totalPrestamos;
+    }
+
+    public void setTotalPrestamos(Long totalPrestamos) {
+        this.totalPrestamos = totalPrestamos;
     }
 
     public Long getTotalDanos() {
@@ -60,6 +70,7 @@ public class EstadisticasHerramientaDTO {
         return "EstadisticasHerramientaDTO{" +
                 "idHerramienta=" + idHerramienta +
                 ", nombreHerramienta='" + nombreHerramienta + '\'' +
+                ", totalPrestamos=" + totalPrestamos +
                 ", totalDanos=" + totalDanos +
                 ", totalMantenimientos=" + totalMantenimientos +
                 '}';

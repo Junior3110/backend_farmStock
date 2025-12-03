@@ -161,6 +161,42 @@ public class MantenimientoLogica {
     }
 
     /**
+     * Cambia el estado de un mantenimiento de forma simplificada.
+     * Útil para marcar como EN_PROCESO o COMPLETADO.
+     * Cuando se marca COMPLETADO, automáticamente devuelve la herramienta a disponible.
+     * 
+     * @param idMantenimiento ID del mantenimiento
+     * @param nuevoEstado PENDIENTE, EN_PROCESO o COMPLETADO
+     * @return Mantenimiento actualizado
+     */
+    public Mantenimiento cambiarEstadoMantenimiento(Integer idMantenimiento, String nuevoEstado) {
+        // Validar estado
+        if (!nuevoEstado.matches("^(PENDIENTE|EN_PROCESO|COMPLETADO)$")) {
+            throw new IllegalArgumentException(
+                "Estado inválido. Debe ser: PENDIENTE, EN_PROCESO o COMPLETADO");
+        }
+
+        Mantenimiento mantenimiento = mantenimientoRepository.findById(idMantenimiento)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "No se encontró el mantenimiento con ID: " + idMantenimiento));
+
+        // Cambiar estado
+        mantenimiento.setEstado(nuevoEstado);
+
+        // Si se completó, devolver herramienta a disponible
+        if ("COMPLETADO".equals(nuevoEstado)) {
+            Herramienta_detalle detalle = mantenimiento.getHerramientaDetalle();
+            if (detalle != null) {
+                detalle.setEstado("Disponible");
+                detalle.setDisponible(true);
+                herramientaDetalleRepository.save(detalle);
+            }
+        }
+
+        return mantenimientoRepository.save(mantenimiento);
+    }
+
+    /**
      * Elimina un registro de mantenimiento/daño.
      */
     public void eliminarMantenimiento(Integer id) {
@@ -175,7 +211,7 @@ public class MantenimientoLogica {
      * Método profesional que consulta de forma optimizada usando queries específicas.
      * 
      * @param idHerramienta ID de la herramienta a consultar
-     * @return DTO con totalDanos y totalMantenimientos
+     * @return DTO con totalPrestamos, totalDanos y totalMantenimientos
      * @throws IllegalArgumentException si la herramienta no existe
      */
     public EstadisticasHerramientaDTO obtenerEstadisticasHerramienta(Integer idHerramienta) {
@@ -185,6 +221,7 @@ public class MantenimientoLogica {
                 "No se encontró la herramienta con ID: " + idHerramienta));
 
         // Obtener contadores usando queries optimizadas
+        Long totalPrestamos = Long.valueOf(herramienta.getContadorPrestamos() != null ? herramienta.getContadorPrestamos() : 0);
         Long totalDanos = mantenimientoRepository.contarDanosPorHerramienta(idHerramienta);
         Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorHerramienta(idHerramienta);
 
@@ -192,6 +229,7 @@ public class MantenimientoLogica {
         return new EstadisticasHerramientaDTO(
             idHerramienta,
             herramienta.getNombre(),
+            totalPrestamos,
             totalDanos,
             totalMantenimientos
         );
@@ -211,12 +249,14 @@ public class MantenimientoLogica {
         return todasLasHerramientas.stream()
             .map(herramienta -> {
                 Integer idHerramienta = herramienta.getIdHerramienta();
+                Long totalPrestamos = Long.valueOf(herramienta.getContadorPrestamos() != null ? herramienta.getContadorPrestamos() : 0);
                 Long totalDanos = mantenimientoRepository.contarDanosPorHerramienta(idHerramienta);
                 Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorHerramienta(idHerramienta);
                 
                 return new EstadisticasHerramientaDTO(
                     idHerramienta,
                     herramienta.getNombre(),
+                    totalPrestamos,
                     totalDanos,
                     totalMantenimientos
                 );
@@ -240,13 +280,15 @@ public class MantenimientoLogica {
 
         Herramientas herramienta = detalle.getHerramienta();
 
-        // Contar daños y mantenimientos de esta unidad específica
+        // Contar préstamos, daños y mantenimientos de esta unidad específica
+        Long totalPrestamos = Long.valueOf(detalle.getContadorPrestamos() != null ? detalle.getContadorPrestamos() : 0);
         Long totalDanos = mantenimientoRepository.contarDanosPorCodigoUnico(codigoUnico);
         Long totalMantenimientos = mantenimientoRepository.contarMantenimientosPorCodigoUnico(codigoUnico);
 
         return new EstadisticasHerramientaDTO(
             herramienta.getIdHerramienta(),
             herramienta.getNombre() + " (" + codigoUnico + ")",
+            totalPrestamos,
             totalDanos,
             totalMantenimientos
         );
