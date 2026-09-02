@@ -1,6 +1,7 @@
 package com.FarmStock_Backend.FarmStock.Controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -76,4 +77,33 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
+
+    
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody Usuario datosLogin) {
+        try {
+            String mensaje = service.login(
+                    datosLogin.getNumeroDocumento(),
+                    datosLogin.getContrasena(),
+                    datosLogin.getTipoDocumento(),
+                    datosLogin.getCargo()
+            );
+            return ResponseEntity.ok(mensaje);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/documento/{numeroDocumento}")
+    public ResponseEntity<?> buscarPorNumeroDocumento(@PathVariable String numeroDocumento) {
+        try {
+            Usuario usuario = service.buscarPorNumeroDocumento(numeroDocumento);
+            return ResponseEntity.ok(usuario);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+
 }
